@@ -336,7 +336,8 @@ function buildParticles(){ particles=[]; if(!roadLayer)return;
   roadLayer.eachLayer(l=>{ const p=l.feature&&l.feature.properties; if(!p||!p.tmda)return;
     let lls=l.getLatLngs(); const segs=Array.isArray(lls[0])?lls:[lls];
     for(const seg of segs){ if(!seg||seg.length<2)continue;
-      const n=Math.max(1,Math.min(20,Math.round(p.tmda/roadTmdaMax*12)));
+      // densidad ∝ TMDA (ref p90) y ∝ largo del tramo (partículas por unidad de recorrido)
+      const dens=Math.min(1.4,p.tmda/roadTmdaRef), n=Math.max(1,Math.min(22,Math.round(dens*(seg.length-1)*0.9)));
       for(let k=0;k<n;k++) particles.push({seg,pos:Math.random()*(seg.length-1),col:colorVal(p.tmda)}); } }); }
 function drawParticlesFrame(){ if(flowMode!=='particulas'||!pctx){particleAnim=null;return;}
   const s=map.getSize(); pctx.clearRect(0,0,s.x,s.y);
@@ -381,15 +382,16 @@ function raise(){ [flowLayer,ptLayer,peajeLayer].forEach(l=>{ if(l&&map.hasLayer
 
 // ---------- RED VIAL por región (bajo demanda) ----------
 function clearRoads(){ if(roadLayer){map.removeLayer(roadLayer);roadLayer=null;} }
-let flowMode='flechas', roadTmdaMax=1;   // modos: flechas · cintas · particulas · columnas
+let flowMode='flechas', roadTmdaMax=1, roadTmdaRef=1;   // ref = p90 (robusto a outliers)
 function roadStyle(f){ const t=(f&&f.properties)?f.properties.tmda:null;
-  if(flowMode==='cintas'){ if(t) return {color:colorVal(t),weight:1+Math.sqrt(t/roadTmdaMax)*9,opacity:.92,lineCap:'round'};
-    return {color:cssv('--road')||'#8aa0b8',weight:1,opacity:.26}; }
+  if(flowMode==='cintas'){ if(t) return {color:colorVal(t),weight:1.5+Math.min(1,Math.sqrt(t/roadTmdaRef))*12,opacity:.9,lineCap:'round'};
+    return {color:cssv('--road')||'#8aa0b8',weight:1,opacity:.24}; }
   return {color:cssv('--road')||'#8aa0b8',weight:1.1,opacity:.85}; }
 async function loadRoads(cod){ clearRoads(); if(!showRoad||!cod)return;
   try{ let gj=roadCache[cod];
     if(!gj){ const r=await fetch('data/red_vial/'+cod+'.geojson'); if(!r.ok)throw 0; gj=await r.json(); roadCache[cod]=gj; }
     roadTmdaMax=Math.max(1,...gj.features.map(f=>(f.properties&&f.properties.tmda)||0));
+    { const tv=gj.features.map(f=>f.properties&&f.properties.tmda).filter(x=>x>0).sort((a,b)=>a-b); roadTmdaRef=tv.length?Math.max(1,tv[Math.floor(tv.length*0.9)]):1; }
     roadLayer=L.geoJSON(gj,{style:roadStyle,
       onEachFeature:(f,l)=>{ const p=f.properties||{}; l.bindTooltip((p.NOMBRE_CAMINO||'')+(p.ROL?(' · '+p.ROL):''),{sticky:true}); }});
     roadLayer.addTo(map); roadLayer.bringToBack(); const b=map.hasLayer(canvasLight)||map.hasLayer(canvasDark)||map.hasLayer(sat)||map.hasLayer(streets);
