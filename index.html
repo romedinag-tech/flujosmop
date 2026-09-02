@@ -31,13 +31,13 @@
 html,body{margin:0;height:100%;font-family:var(--font-ui);color:var(--ink);background:var(--paper);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
 #app{display:grid;grid-template-rows:auto 1fr;height:100vh}
 /* HEADER transversal */
-#topbar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;padding:12px 22px;background:var(--grad);color:#fff}
-#topbar .sig{justify-self:start;font-size:.72rem;font-style:italic;opacity:.85;white-space:nowrap}
+#topbar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;padding:14px 22px;background:var(--grad);color:#fff}
+#topbar .sig{justify-self:start;font-size:.75rem;font-style:italic;opacity:.85;white-space:nowrap}
 #topbar .sig b{font-style:normal;color:#ffd24a;font-weight:700}
 #topbar .tbctrl{justify-self:end;display:flex;align-items:center;gap:12px}
-#topbar .brand{justify-self:center;text-align:center;font-family:var(--font-display);font-weight:700;font-size:1.55rem;line-height:1;letter-spacing:-.015em;text-shadow:0 1px 3px rgba(0,0,0,.3)}
+#topbar .brand{justify-self:center;text-align:center;font-family:var(--font-display);font-weight:700;font-size:2.55rem;line-height:.98;letter-spacing:-.02em;text-shadow:0 2px 5px rgba(0,0,0,.35)}
 #topbar .brand em{font-style:normal;color:#ffd24a}
-#topbar .brand small{display:block;font-family:var(--font-ui);font-weight:600;font-size:.66rem;letter-spacing:1.2px;text-transform:uppercase;opacity:.85;margin-top:3px}
+#topbar .brand small{display:block;font-family:var(--font-ui);font-weight:600;font-size:.7rem;letter-spacing:1.6px;text-transform:uppercase;opacity:.82;margin-top:4px}
 #topbar .spacer{flex:1}
 #topbar label.ttl{font-size:.62rem;text-transform:uppercase;letter-spacing:.5px;opacity:.8;font-weight:600;margin-right:4px}
 #selUnit{padding:7px 10px;border:1px solid rgba(255,255,255,.35);border-radius:8px;font-size:13px;font-weight:700;background:rgba(255,255,255,.12);color:#fff}
@@ -156,28 +156,28 @@ canvas{max-width:100%}
         <div class="kpis" id="kpis"></div>
       </div>
       <div class="sect">
-        <p class="eyebrow">Regiones (norte → sur)</p>
+        <p class="eyebrow">🗺 Regiones (norte → sur)</p>
         <button class="allbtn on" id="allReg">🇨🇱 Todo Chile</button>
         <div class="reglist" id="reglist"></div>
       </div>
       <div class="sect">
-        <p class="eyebrow">Buscar comuna</p>
+        <p class="eyebrow">🔎 Buscar comuna</p>
         <div class="searchw"><input id="cbox" placeholder="🔎 comuna o área metropolitana…" autocomplete="off"><div id="clist"></div></div>
       </div>
       <div class="sect">
-        <p class="eyebrow">Modo de flujo <button id="modeInfo" class="ibtn" title="Acerca de los modos">ℹ</button></p>
+        <p class="eyebrow">🎛 Modo de flujo <button id="modeInfo" class="ibtn" title="Acerca de los modos">ℹ</button></p>
         <div class="seg2" id="flowModeSeg">
-          <button data-m="flechas" class="on">Flechas</button><button data-m="cintas">Cintas</button><button data-m="particulas">Partículas</button><button data-m="columnas">3D</button>
+          <button data-m="flechas" class="on">➤ Flechas</button><button data-m="cintas">▬ Cintas</button><button data-m="particulas">✦ Partículas</button><button data-m="columnas">⬛ 3D</button>
         </div>
         <div class="hint2" id="modeHint"></div>
       </div>
       <div class="sect">
-        <p class="eyebrow">Capas</p>
+        <p class="eyebrow">🗂 Capas</p>
         <div class="lyr">
-          <label><input type="checkbox" id="ckFlow" checked> Flujo por tramo (al elegir región)</label>
-          <label><input type="checkbox" id="ckPts" checked> Puntos de medición</label>
-          <label><input type="checkbox" id="ckRoad" checked> Red vial (al elegir región)</label>
-          <label><input type="checkbox" id="ckPeaje"> Plazas de peaje</label>
+          <label><input type="checkbox" id="ckFlow" checked> ➤ Flujo por tramo (al elegir región)</label>
+          <label><input type="checkbox" id="ckPts" checked> 📍 Puntos de medición</label>
+          <label><input type="checkbox" id="ckRoad" checked> 🛣️ Red vial (al elegir región)</label>
+          <label><input type="checkbox" id="ckPeaje"> 🛃 Plazas de peaje</label>
         </div>
         <div class="toggle" id="thrTog"></div>
         <div id="tipoFilt"></div>
@@ -193,9 +193,9 @@ canvas{max-width:100%}
     <!-- DERECHA -->
     <aside id="right">
       <h2 id="rightTitle" style="font-size:1.06rem;margin:0 0 8px">Panorama territorial</h2>
-      <div class="rp" style="flex:1.05"><h3>Evolución del TMDA</h3><p class="cap" id="capEvo"></p><div class="rpc"><canvas id="cEvo"></canvas></div></div>
-      <div class="rp" style="flex:1.42"><h3>Comunas con mayor TMDA</h3><p class="cap" id="capTop"></p><div class="rpc"><canvas id="cTop"></canvas></div></div>
-      <div class="rp" style="flex:0.95;margin-bottom:0"><h3>Estaciones por rango de flujo</h3><p class="cap" id="capDist"></p><div class="rpc"><canvas id="cDist"></canvas></div></div>
+      <div class="rp" style="flex:1.05"><h3>📈 Evolución del TMDA</h3><p class="cap" id="capEvo"></p><div class="rpc"><canvas id="cEvo"></canvas></div></div>
+      <div class="rp" style="flex:1.42"><h3>📊 Comunas con mayor TMDA</h3><p class="cap" id="capTop"></p><div class="rpc"><canvas id="cTop"></canvas></div></div>
+      <div class="rp" style="flex:0.95;margin-bottom:0"><h3>🍩 Estaciones por rango de flujo</h3><p class="cap" id="capDist"></p><div class="rpc"><canvas id="cDist"></canvas></div></div>
     </aside>
   </div>
 </div>
@@ -386,7 +386,7 @@ function raise(){ [flowLayer,ptLayer,peajeLayer].forEach(l=>{ if(l&&map.hasLayer
 function clearRoads(){ if(roadLayer){map.removeLayer(roadLayer);roadLayer=null;} }
 let flowMode='flechas', roadTmdaMax=1, roadTmdaRef=1;   // ref = p90 (robusto a outliers)
 function roadStyle(f){ const t=(f&&f.properties)?f.properties.tmda:null;
-  if(flowMode==='cintas'){ if(t) return {color:colorVal(t),weight:1.5+Math.min(1,Math.sqrt(t/roadTmdaRef))*12,opacity:.9,lineCap:'round'};
+  if(flowMode==='cintas'){ if(t) return {color:colorVal(t),weight:2+Math.min(1.15,Math.sqrt(t/roadTmdaRef))*23,opacity:.9,lineCap:'round',lineJoin:'round'};
     return {color:cssv('--road')||'#8aa0b8',weight:1,opacity:.24}; }
   return {color:cssv('--road')||'#8aa0b8',weight:1.1,opacity:.85}; }
 async function loadRoads(cod){ clearRoads(); if(!showRoad||!cod)return;
@@ -421,8 +421,8 @@ function updateKPIs(){ const rl=scopeRegList();
   const est=rl.reduce((a,r)=>a+r.n_est,0), ram=rl.reduce((a,r)=>a+r.n_ramas,0);
   const y=DB.years, pj=(DB.peajes||[]).length;
   const pjS= selReg? '—' : fmt(pj);
-  document.getElementById('scopeLbl').textContent = selReg? (REGN[selReg]+' — resumen') : 'Chile — resumen';
-  const tiles=[['Estaciones',fmt(est)],['Mediciones',fmt(ram)],['Período',y[0]+'–'+y[y.length-1]],['Peajes (país)',fmt(pj)]];
+  document.getElementById('scopeLbl').textContent = '📊 '+(selReg? (REGN[selReg]+' — resumen') : 'Chile — resumen');
+  const tiles=[['📍 Estaciones',fmt(est)],['🚗 Mediciones',fmt(ram)],['📅 Período',y[0]+'–'+y[y.length-1]],['🛃 Peajes (país)',fmt(pj)]];
   document.getElementById('kpis').innerHTML=tiles.map(t=>`<div class="kpi"><div class="v">${t[1]}</div><div class="l">${t[0]}</div></div>`).join(''); }
 
 // ---------- panel DERECHO: gráficos territoriales ----------
@@ -431,7 +431,7 @@ function chartBase(){ const inkmid=cssv('--ink-mid')||'#4A5A70',lineC=cssv('--li
   Chart.defaults.color=inkmid; Chart.defaults.borderColor=lineC; Chart.defaults.font.family="Inter, system-ui, sans-serif"; return {inkmid,lineC}; }
 function renderTerritorial(){ chartBase();
   const accent=cssv('--accent')||'#1F6FEB', inkmid=cssv('--ink-mid')||'#4A5A70';
-  document.getElementById('rightTitle').textContent = selReg? ('Panorama · '+REGN[selReg]) : 'Panorama territorial';
+  document.getElementById('rightTitle').textContent = selReg? ('🗺 Panorama · '+REGN[selReg]) : '🗺 Panorama territorial';
   // 1) evolución TMDA
   const ser = selReg? (DB.series.reg[selReg]||[]) : DB.series.nac;
   const yrs=ser.map(x=>x[0]), med=ser.map(x=>x[1]), ns=ser.map(x=>x[2]);
@@ -517,7 +517,7 @@ function stationCard(estId){ const s=DB.stations?DB.stations[estId]:null; const 
     +`<b>${r.rol||'—'}</b> <span class="mvnm">${r.nombre||''}</span>`
     +`<span class="mvdir">${card8(r.az)||'·'}</span><span class="mvt">${fmt(r.tmda)} <small>veh/día</small></span></div>`).join('');
   el.innerHTML=`<div class="ficha">
-     <div class="fmeta"><h3>Estación ${estId}</h3>
+     <div class="fmeta"><h3>📍 Estación ${estId}</h3>
        <div class="stat">${s.comuna} · ${REGN[s.reg]||''}</div>
        <div class="stat">TMDA total (última medición) <b>${fmt(totLast)}</b> veh/día · ${s.ramas.length} ramas</div>
        <div class="eyebrow" style="margin:10px 0 4px">Tramos del punto — el color coincide con la banda en el mapa</div>
@@ -537,7 +537,7 @@ function sizeLegend(){ const vmax=ptVmax||Math.max(1,...U.puntos.map(p=>p[4]));
    +'<div style="display:flex;align-items:flex-end;gap:16px;margin-top:6px">'
    +[0.12,0.45,1].map(f=>{ const r=ptRadius(f*vmax); return '<span style="display:flex;flex-direction:column;align-items:center;gap:3px"><span style="width:'+(2*r)+'px;height:'+(2*r)+'px;border-radius:50%;background:var(--mut-2);opacity:.4"></span><span style="font-size:9px;color:var(--mut-2)">'+fmt(f*vmax)+'</span></span>'; }).join('')
    +'</div>'; }
-function renderLeg(){ document.getElementById('leg').innerHTML='<p class="eyebrow">Leyenda</p>'
+function renderLeg(){ document.getElementById('leg').innerHTML='<p class="eyebrow">🏷 Leyenda</p>'
   +legbar(VPAL,vbreaks,'Flujo por tramo · TMDA (bajo→alto)')
   +'<div class="row" style="margin-top:6px"><span style="color:var(--accent);font-size:14px">➤</span> Banda = TMDA del tramo (total, ambos sentidos) · grosor/color = magnitud</div>'
   +'<div class="row"><span class="sw" style="background:var(--road);border-radius:2px;height:3px"></span>Red vial (región)</div>'
