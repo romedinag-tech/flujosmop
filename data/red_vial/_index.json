@@ -1,0 +1,98 @@
+[
+ {
+  "cod": "15",
+  "nombre": "Arica y Parinacota",
+  "n_tramos": 177,
+  "kb": 104
+ },
+ {
+  "cod": "1",
+  "nombre": "Tarapacá",
+  "n_tramos": 276,
+  "kb": 152
+ },
+ {
+  "cod": "2",
+  "nombre": "Antofagasta",
+  "n_tramos": 301,
+  "kb": 178
+ },
+ {
+  "cod": "3",
+  "nombre": "Atacama",
+  "n_tramos": 703,
+  "kb": 365
+ },
+ {
+  "cod": "4",
+  "nombre": "Coquimbo",
+  "n_tramos": 759,
+  "kb": 377
+ },
+ {
+  "cod": "5",
+  "nombre": "Valparaíso",
+  "n_tramos": 1552,
+  "kb": 530
+ },
+ {
+  "cod": "13",
+  "nombre": "Metropolitana",
+  "n_tramos": 776,
+  "kb": 268
+ },
+ {
+  "cod": "6",
+  "nombre": "O'Higgins",
+  "n_tramos": 1559,
+  "kb": 551
+ },
+ {
+  "cod": "7",
+  "nombre": "Maule",
+  "n_tramos": 1466,
+  "kb": 612
+ },
+ {
+  "cod": "16",
+  "nombre": "Ñuble",
+  "n_tramos": 868,
+  "kb": 369
+ },
+ {
+  "cod": "8",
+  "nombre": "Biobío",
+  "n_tramos": 1034,
+  "kb": 460
+ },
+ {
+  "cod": "9",
+  "nombre": "La Araucanía",
+  "n_tramos": 1812,
+  "kb": 740
+ },
+ {
+  "cod": "14",
+  "nombre": "Los Ríos",
+  "n_tramos": 831,
+  "kb": 356
+ },
+ {
+  "cod": "10",
+  "nombre": "Los Lagos",
+  "n_tramos": 1490,
+  "kb": 602
+ },
+ {
+  "cod": "11",
+  "nombre": "Aysén",
+  "n_tramos": 325,
+  "kb": 195
+ },
+ {
+  "cod": "12",
+  "nombre": "Magallanes",
+  "n_tramos": 167,
+  "kb": 115
+ }
+]
