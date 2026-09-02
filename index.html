@@ -111,6 +111,7 @@ canvas{max-width:100%}
 .mvdir{font-family:var(--font-data);font-size:11px;color:var(--mut-2);width:26px;text-align:center}
 .mvt{font-family:var(--font-data);font-weight:700;color:var(--ink)}.mvt small{font-weight:500;color:var(--mut);font-size:.7em}
 .note{font-size:11px;color:var(--mut-2);line-height:1.4;margin-top:10px}
+.flabel span{display:inline-block;transform:translate(-50%,-135%);font-family:var(--font-data);font-weight:700;font-size:11px;color:#fff;background:rgba(10,14,20,.85);border:1.5px solid #fff;border-radius:6px;padding:0 5px;white-space:nowrap;line-height:1.5;box-shadow:0 1px 3px rgba(0,0,0,.5)}
 </style></head><body>
 <div id="app">
   <div id="topbar">
@@ -143,10 +144,8 @@ canvas{max-width:100%}
       <div class="sect">
         <p class="eyebrow">Capas</p>
         <div class="lyr">
-          <label><input type="checkbox" id="ckFlow" checked> Flechas de flujo (al elegir región)</label>
-          <label><input type="checkbox" id="ckChoro" checked> Coropleta comunal (TMDA)</label>
+          <label><input type="checkbox" id="ckFlow" checked> Flujo por tramo (al elegir región)</label>
           <label><input type="checkbox" id="ckPts" checked> Puntos de medición</label>
-          <label><input type="checkbox" id="ckZon" checked> Zonas (grilla)</label>
           <label><input type="checkbox" id="ckRoad" checked> Red vial (al elegir región)</label>
           <label><input type="checkbox" id="ckPeaje"> Plazas de peaje</label>
         </div>
@@ -159,7 +158,7 @@ canvas{max-width:100%}
     <!-- CENTRO -->
     <main id="center">
       <div id="map"></div>
-      <div id="bottom"><p class="ph">Pincha una <b>comuna</b>, una <b>zona</b> o un <b>punto</b> en el mapa para ver aquí su detalle y su tendencia por año.</p></div>
+      <div id="bottom"><p class="ph">Pincha un <b>punto de medición</b> del mapa para ver aquí su ficha (tramos y flujo por año), o una <b>comuna</b> para su tendencia.</p></div>
     </main>
     <!-- DERECHA -->
     <aside id="right">
@@ -218,18 +217,17 @@ function setBase(){ [canvasLight,canvasDark,sat,streets,refRoads,refPlaces].forE
   if(geoLayer) geoLayer.setStyle(styleF); }
 
 // ---------- capas de datos ----------
-let geoLayer,ptLayer,zonLayer=null,peajeLayer=null,roadLayer=null; const layerByCut={}, roadCache={};
-let showChoro=true,showPts=true,showZon=true,showRoad=true;
+let geoLayer,ptLayer,peajeLayer=null,roadLayer=null; const layerByCut={}, roadCache={};
+let showPts=true,showRoad=true;
 function inScope(cut){ return !selReg || CUTREG[cut]===selReg; }
-function edge(sel,sat_){ if(sel)return '#ffcc00'; if(sat_)return '#fff'; return isDark()?'#37424f':'#b6bcc6'; }
-function styleF(f){ const cut=f.properties.cut, v=comVal(cut), sel=cut===selCut, sat_=mapStyle!=='mapa'&&mapStyle!=='calles';
+// comunas: solo contorno sutil para orientación y click (sin coropleta)
+function styleF(f){ const cut=f.properties.cut, sel=cut===selCut, sat_=mapStyle!=='mapa'&&mapStyle!=='calles';
   const dim = selReg && !inScope(cut);
-  const base = sat_ ? (v==null?0.06:0.42) : (v==null?0.16:0.82);
-  const fo = showChoro ? (dim?0.04:base) : 0.01;
-  return {fillColor:colorFor(v),weight:sel?3:(sat_?0.7:0.4),color:edge(sel,sat_),fillOpacity:fo}; }
+  return {fillColor:'#000',fillOpacity:sel?0.05:0.001,weight:sel?2.5:0.6,
+          color:sel?'#ffcc00':(sat_?'#ffffff':(isDark()?'#4a5a70':'#93a1b3')),opacity:dim?0:(sel?1:0.4)}; }
 geoLayer=L.geoJSON(DB.geo,{style:styleF,onEachFeature:(f,l)=>{ layerByCut[f.properties.cut]=l;
   l.on('click',()=>selectCom(f.properties.cut,false));
-  l.on('mouseover',()=>l.setStyle({weight:2,color:(mapStyle==='sat'||isDark())?'#fff':'#111'}));
+  l.on('mouseover',()=>{ if(!(selReg&&!inScope(f.properties.cut))) l.setStyle({weight:2,color:(mapStyle==='sat'||isDark())?'#fff':'#111',opacity:1}); });
   l.on('mouseout',()=>geoLayer.setStyle(styleF));
   l.bindTooltip(f.properties.nombre,{sticky:true}); }}).addTo(map);
 setBase();
@@ -249,13 +247,7 @@ function drawPeajes(on){ if(peajeLayer){map.removeLayer(peajeLayer);peajeLayer=n
   for(const p of DB.peajes){ L.circleMarker([p[0],p[1]],{radius:5,weight:2,color:PEAJE_STROKE,fillColor:PEAJE_FILL,fillOpacity:1})
     .bindPopup(`<b>🛃 Peaje: ${p[2]}</b><br>${p[3]||''}<br>${p[4]?('Ruta '+p[4]):''} ${p[5]?('· '+p[5]):''}`).addTo(peajeLayer); }
   peajeLayer.addTo(map); }
-function drawZon(cut){ if(zonLayer){map.removeLayer(zonLayer);zonLayer=null;} if(!showZon||!cut)return;
-  const arr=(U.zon[kth()]||{})[cut]; if(!arr)return; zonLayer=L.layerGroup();
-  for(const it of arr){ const rect=it[0],med=it[1],n=it[2];
-    L.polygon(rect,{color:isDark()?'#0c0f15':'#555',weight:.3,fillColor:colorVal(med),fillOpacity:.6})
-     .bindPopup(`Zona · <b>${fmt(med)} veh/día</b> (TMDA mediana)<br>${n} mediciones — clic para gráfico`).on('click',()=>ctxZona(it,cut)).addTo(zonLayer); }
-  zonLayer.addTo(map); }
-// ---------- FLECHAS de flujo (una por rama, orientadas por el eje vial) ----------
+// ---------- FLUJO POR TRAMO (una banda por rama/tramo, orientada por el eje vial) ----------
 let flowLayer=null, showFlow=true, selStation=null, selRamaColor={};
 function arrowGeom(lat,lon,az,tmda,side){
   const rad=Math.PI/180, cl=Math.max(0.3,Math.cos(lat*rad));
@@ -269,15 +261,16 @@ function arrowGeom(lat,lon,az,tmda,side){
   return {s:[sLat,sLon],e:[eLat,eLon],
     h1:[eLat+hL*Math.cos(b1),eLon+hL*Math.sin(b1)/cl],
     h2:[eLat+hL*Math.cos(b2),eLon+hL*Math.sin(b2)/cl]}; }
-function paintArrow(a,layer,hl){ const lat=a[0],lon=a[1],az=a[2],tmda=a[3],side=a[6],est=a[7],rama=a[9];
+function paintArrow(a,layer,hl){ const lat=a[0],lon=a[1],az=a[2],tmda=a[3],est=a[7],rama=a[9];
   const col = hl ? (selRamaColor[rama]||colorVal(tmda)) : colorVal(tmda);
-  const w = (hl?2.6:0)+1.4+Math.min(4.5,tmda/(DB.arrowMax||1)*5);
-  const g=arrowGeom(lat,lon,az,tmda,side);
-  L.polyline([g.s,g.e],{color:col,weight:w,opacity:hl?1:.9,lineCap:'round'}).addTo(layer);
-  L.polygon([g.e,g.h1,g.h2],{color:col,weight:1,fillColor:col,fillOpacity:.97,stroke:false}).addTo(layer);
-  if(hl) L.polyline([g.s,g.e],{color:'#fff',weight:w+2,opacity:.28,lineCap:'round'}).addTo(layer).bringToBack();
+  const w = (hl?2.4:0)+1.4+Math.min(4.6,tmda/(DB.arrowMax||1)*5);
+  const g=arrowGeom(lat,lon,az,tmda,0);
+  if(hl) L.polyline([g.s,g.e],{color:'#fff',weight:w+3,opacity:.32,lineCap:'round'}).addTo(layer);
+  L.polyline([g.s,g.e],{color:col,weight:w,opacity:hl?1:.88,lineCap:'round'}).addTo(layer);
+  L.polygon([g.e,g.h1,g.h2],{color:col,weight:.8,fillColor:col,fillOpacity:.97,stroke:false}).addTo(layer);
   L.circleMarker(g.e,{radius:Math.max(3,w),color:col,fillColor:col,fillOpacity:.001,weight:0})
-    .bindPopup(`<b>${est}</b><br>${a[8]}<br><b>${fmt(tmda)} veh/día</b> (TMDA · sentido por eje vial)`).addTo(layer); }
+    .bindPopup(`<b>Estación ${est}</b><br>${a[8]}<br><b>${fmt(tmda)} veh/día</b> · TMDA del tramo (total, ambos sentidos)`).addTo(layer);
+  if(hl) L.marker(g.e,{icon:L.divIcon({className:'flabel',iconSize:[0,0],html:'<span style="border-color:'+col+'">'+fmt(tmda)+'</span>'}),interactive:false}).addTo(layer); }
 function drawArrows(){ if(flowLayer){map.removeLayer(flowLayer);flowLayer=null;} if(!showFlow||!DB.arrows||!selReg)return;
   flowLayer=L.layerGroup(); const deferred=[];
   for(const a of DB.arrows){ const tmda=a[3],tip=a[4],cut=a[5];
@@ -311,7 +304,7 @@ function selectRegion(cod){ selReg=cod; selCut=null; selStation=null;
   geoLayer.setStyle(styleF); drawPoints(); drawArrows();
   if(cod){ fitRegion(cod); loadRoads(cod); } else { clearRoads(); try{map.flyTo([-38,-71],4,{duration:.7});}catch(e){} }
   updateKPIs(); renderTerritorial(); renderLeg();
-  document.getElementById('bottom').innerHTML='<p class="ph">Pincha una <b>comuna</b>, una <b>zona</b> o un <b>punto</b> en el mapa para ver aquí su detalle.</p>'; }
+  document.getElementById('bottom').innerHTML='<p class="ph">Pincha un <b>punto de medición</b> del mapa para ver su ficha, o una <b>comuna</b> para su tendencia.</p>'; }
 
 // ---------- KPIs / conteos (scope país o región) ----------
 function scopeRegList(){ return selReg? DB.regiones.filter(r=>r.cod===selReg) : DB.regiones; }
@@ -370,7 +363,7 @@ function ctxChart(t,label){ chartBase(); const accent=cssv('--accent'),inkmid=cs
   chCtx=new Chart(document.getElementById('cvctx'),{data:{labels,datasets:ds},options:{maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:10,font:{size:10}}}},animation:false,
     scales:{yv:{position:'left',title:{display:true,text:'TMDA (veh/día)'}},yn:{position:'right',grid:{display:false},ticks:{precision:0}},x:{grid:{display:false}}}}}); }
 function dlBtn(host,name){ const b=document.createElement('button'); b.className='dl'; b.textContent='⤓ PNG'; b.onclick=()=>{ if(chCtx){const a=document.createElement('a');a.href=chCtx.toBase64Image('image/png',1);a.download=name;a.click();} }; host.appendChild(b); }
-function selectCom(cut,fly){ selCut=cut; selStation=null; geoLayer.setStyle(styleF); drawZon(cut); drawArrows(); raise();
+function selectCom(cut,fly){ selCut=cut; selStation=null; geoLayer.setStyle(styleF); drawArrows(); raise();
   if(fly&&layerByCut[cut]){ try{map.flyToBounds(layerByCut[cut].getBounds(),{maxZoom:11,duration:.7});}catch(e){} }
   const c=U.comunas[cut], el=document.getElementById('bottom');
   const nom=(DB.geo.features.find(f=>f.properties.cut===cut)||{properties:{}}).properties.nombre||(c&&c.nombre)||'';
@@ -418,10 +411,10 @@ function stationCard(estId){ const s=DB.stations?DB.stations[estId]:null; const 
      <div class="fmeta"><h3>Estación ${estId}</h3>
        <div class="stat">${s.comuna} · ${REGN[s.reg]||''}</div>
        <div class="stat">TMDA total (última medición) <b>${fmt(totLast)}</b> veh/día · ${s.ramas.length} ramas</div>
-       <div class="eyebrow" style="margin:10px 0 4px">Ramas por sentido — el color coincide con la flecha en el mapa</div>
+       <div class="eyebrow" style="margin:10px 0 4px">Tramos del punto — el color coincide con la banda en el mapa</div>
        <div class="mv">${mv}</div>
        <div id="dlh"></div>
-       <p class="note">Fuente: PNCV (Vialidad, MOP) entrega <b>TMDA</b> = promedio diario anual, por rama. El <b>perfil horario</b> y el <b>histograma diario</b> no están en la publicación (requieren los conteos crudos / solicitud). Comparación consistente: todas las cifras son veh/día (TMDA).</p>
+       <p class="note">Fuente: PNCV (Vialidad, MOP). Cada cifra es el <b>TMDA del tramo</b> (promedio diario anual, <b>total de ambos sentidos</b>). El PNCV mide el flujo <b>por tramo</b>, <b>no por sentido de circulación ni por movimiento de giro</b>; el perfil horario/diario tampoco está publicado (requiere los conteos crudos). La dirección (N/S/E/O) indica hacia dónde se aleja el tramo, no el sentido del tránsito.</p>
      </div>
      <div class="fchart"><canvas id="cvctx"></canvas></div></div>`;
   stationChart(s); dlBtn(document.getElementById('dlh'),'estacion_'+estId+'.png'); }
@@ -436,9 +429,8 @@ function sizeLegend(){ const vmax=ptVmax||Math.max(1,...U.puntos.map(p=>p[4]));
    +[0.12,0.45,1].map(f=>{ const r=ptRadius(f*vmax); return '<span style="display:flex;flex-direction:column;align-items:center;gap:3px"><span style="width:'+(2*r)+'px;height:'+(2*r)+'px;border-radius:50%;background:var(--mut-2);opacity:.4"></span><span style="font-size:9px;color:var(--mut-2)">'+fmt(f*vmax)+'</span></span>'; }).join('')
    +'</div>'; }
 function renderLeg(){ document.getElementById('leg').innerHTML='<p class="eyebrow">Leyenda</p>'
-  +legbar(PAL,breaks,'Comuna · TMDA mediano') + legbar(VPAL,vbreaks,'Punto · TMDA (bajo→alto)')
-  +(U.tipos.length>1?'<div style="margin-top:6px"><b>Rango de flujo (borde punto)</b></div>'+U.tipos.map((t,i)=>'<div class="row"><span class="sw" style="background:var(--surface);border:2px solid '+U.tcol[i]+';border-radius:50%"></span>'+t+'</div>').join(''):'')
-  +'<div class="row" style="margin-top:6px"><span style="color:var(--accent);font-size:14px">➤</span> Flecha = flujo por rama · grosor/color = TMDA · sentido esquemático</div>'
+  +legbar(VPAL,vbreaks,'Flujo por tramo · TMDA (bajo→alto)')
+  +'<div class="row" style="margin-top:6px"><span style="color:var(--accent);font-size:14px">➤</span> Banda = TMDA del tramo (total, ambos sentidos) · grosor/color = magnitud</div>'
   +'<div class="row"><span class="sw" style="background:var(--road);border-radius:2px;height:3px"></span>Red vial (región)</div>'
   +((DB.peajes&&DB.peajes.length)?'<div class="row"><span class="sw" style="background:'+PEAJE_FILL+';border:2px solid '+PEAJE_STROKE+';border-radius:50%"></span>Plaza de peaje</div>':'')
   + sizeLegend(); }
@@ -472,10 +464,8 @@ function setTheme(dark){ document.documentElement.setAttribute('data-theme',dark
 document.getElementById('themeBtn').textContent=isDark()?'☀':'☾';
 document.getElementById('themeBtn').onclick=()=>setTheme(!isDark());
 // capas
-document.getElementById('ckChoro').onchange=e=>{showChoro=e.target.checked;geoLayer.setStyle(styleF);};
 document.getElementById('ckPts').onchange=e=>{showPts=e.target.checked;drawPoints();};
 document.getElementById('ckFlow').onchange=e=>{showFlow=e.target.checked;drawArrows();};
-document.getElementById('ckZon').onchange=e=>{showZon=e.target.checked;drawZon(selCut);raise();};
 document.getElementById('ckRoad').onchange=e=>{showRoad=e.target.checked; if(showRoad&&selReg)loadRoads(selReg); else clearRoads();};
 document.getElementById('ckPeaje').onchange=e=>drawPeajes(e.target.checked);
 document.getElementById('allReg').onclick=()=>selectRegion(null);
