@@ -140,10 +140,11 @@ function colorVal(v){ for(let i=0;i<vbreaks.length;i++){ if(v<=vbreaks[i]) retur
 function comVal(cut){ const c=U.comunas[cut]; if(!c)return null; const m=c[kth()]; return m?m[1]:null; }
 
 const map=L.map('map',{preferCanvas:true}).setView([-36,-71],5);
-const baseLight=L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-  {maxZoom:19,subdomains:'abcd',attribution:'© OpenStreetMap © CARTO'});
-const baseDark=L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-  {maxZoom:19,subdomains:'abcd',attribution:'© OpenStreetMap © CARTO'});
+// Basemaps Esri Canvas (host keyless server.arcgisonline.com, sin API key ni cuenta)
+const baseLight=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+  {maxZoom:19,maxNativeZoom:16,attribution:'Basemap © Esri, HERE, Garmin'});
+const baseDark=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+  {maxZoom:19,maxNativeZoom:16,attribution:'Basemap © Esri, HERE, Garmin'});
 const baseSat=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
   {maxZoom:19,attribution:'Imagery © Esri, Maxar'});
 const roads=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}',
