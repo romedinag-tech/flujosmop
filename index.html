@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/deck.gl@8.9.35/dist.min.js"></script>
 <style>
 :root{
   --paper:#FBFBFD;--surface:#FFFFFF;--surface-alt:#F4F6F9;--line:#E3E8EF;--line-2:#D6DEE9;
@@ -88,6 +89,10 @@ aside{background:var(--surface);overflow:auto}
 #map{height:100%;background:var(--surface-alt);transform-origin:50% 55%}
 #map.tilt-anim{transition:transform .3s ease}
 .hint3d{position:absolute;right:12px;top:10px;z-index:600;background:rgba(10,14,20,.72);color:#fff;font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:8px;pointer-events:none;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+#deck3d{position:absolute;left:0;top:0;right:0;bottom:350px;z-index:800;background:#0a0d13;overflow:hidden}
+#deck3d[hidden]{display:none}
+#deckHint{position:absolute;left:12px;top:10px;z-index:820;background:rgba(10,14,20,.78);color:#fff;font-size:11px;font-weight:600;padding:4px 10px;border-radius:8px;pointer-events:none;box-shadow:0 1px 3px rgba(0,0,0,.5)}
+#deckHint[hidden]{display:none}
 #bottom{border-top:1px solid var(--line);background:var(--surface);padding:12px 16px;height:350px;overflow:hidden}
 #bottom .ph{color:var(--mut);font-size:13px;margin:8px 0}
 #bottom h3,.rp h3{font-family:var(--font-display);font-size:1.02rem;margin:0 0 6px;color:var(--ink)}
@@ -167,7 +172,7 @@ canvas{max-width:100%}
       <div class="sect">
         <p class="eyebrow">🎛 Modo de flujo <button id="modeInfo" class="ibtn" title="Acerca de los modos">ℹ</button></p>
         <div class="seg2" id="flowModeSeg">
-          <button data-m="flechas" class="on">➤ Flechas</button><button data-m="cintas">▬ Cintas</button><button data-m="particulas">✦ Partículas</button><button data-m="columnas">⬛ 3D</button>
+          <button data-m="flechas" class="on">➤ Flechas</button><button data-m="cintas">▬ Cintas</button><button data-m="particulas">✦ Partículas</button><button data-m="d3">⬛ 3D</button>
         </div>
         <div class="hint2" id="modeHint"></div>
       </div>
@@ -188,6 +193,8 @@ canvas{max-width:100%}
     <!-- CENTRO -->
     <main id="center">
       <div id="map"></div>
+      <div id="deck3d" hidden></div>
+      <div id="deckHint" hidden>🧊 Vista 3D · arrastra para orbitar/inclinar · rueda: zoom</div>
       <div id="bottom"><p class="ph">Pincha un <b>punto de medición</b> del mapa para ver aquí su ficha (tramos y flujo por año), o una <b>comuna</b> para su tendencia.</p></div>
     </main>
     <!-- DERECHA -->
@@ -277,7 +284,7 @@ setBase();
 
 let ptVmax=1;
 function ptRadius(v){ return 3+13*Math.sqrt(Math.max(0,v)/ptVmax); }   // área ∝ TMDA
-function drawPoints(){ if(ptLayer)map.removeLayer(ptLayer); if(!showPts||flowMode==='columnas')return; ptLayer=L.layerGroup();
+function drawPoints(){ if(ptLayer)map.removeLayer(ptLayer); if(!showPts)return; ptLayer=L.layerGroup();
   ptVmax=Math.max(1,...U.puntos.map(p=>p[4]));
   for(const p of U.puntos){ if(p[2]<THR()||!tipoOn[p[6]]||!inScope(p[7]))continue;
     L.circleMarker([p[0],p[1]],{radius:ptRadius(p[4]),weight:1.6,color:'#ffffff',opacity:.95,fillColor:colorVal(p[4]),fillOpacity:.95})
@@ -366,19 +373,59 @@ function drawColumns(){ clearColumns(); if(flowMode!=='columnas'||!selReg)return
      .bindPopup('<b>Estación '+k+'</b><br>'+s.comuna+'<br><b>'+fmt(tot)+' veh/día</b> · TMDA total').addTo(columnsLayer); }
   columnsLayer.addTo(map); }
 
+// ---------- VISTA 3D REAL (deck.gl): satélite + red extruida por TMDA + columnas + partículas ----------
+let deckgl=null, deck3dActive=false, deck3dRAF=null, deck3dParts=[], deck3dStatic=[], deckVS=null;
+function vRGB(t){ const h=colorVal(t).replace('#',''); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+function segCoords(f){ const g=f.geometry; if(!g)return []; return g.type==='LineString'?[g.coordinates]:(g.type==='MultiLineString'?g.coordinates:[]); }
+function build3d(cod){ const gj=roadCache[cod]; deck3dParts=[]; if(!gj){deck3dStatic=[];return;}
+  const ref=roadTmdaRef||1, roads=[];
+  for(const f of gj.features){ const t=f.properties&&f.properties.tmda; if(!t)continue;
+    for(const path of segCoords(f)){ if(path.length<2)continue; roads.push({path,tmda:t,col:vRGB(t)});
+      const dens=Math.min(1.4,t/ref), n=Math.max(1,Math.min(18,Math.round(dens*(path.length-1)*0.9)));
+      for(let k=0;k<n;k++) deck3dParts.push({path,pos:Math.random()*(path.length-1),col:vRGB(t)}); } }
+  const sts=Object.keys(DB.stations).filter(k=>DB.stations[k].reg===cod).map(k=>{const s=DB.stations[k],tot=s.total.length?s.total[s.total.length-1][1]:0;return{position:[s.lon,s.lat],tmda:tot,col:vRGB(tot),id:k,com:s.comuna};}).filter(d=>d.tmda>0);
+  const maxTot=Math.max(1,...sts.map(d=>d.tmda));
+  deck3dStatic=[
+    new deck.PathLayer({id:'roads',data:roads,getPath:d=>d.path,getColor:d=>d.col,getWidth:d=>40+Math.sqrt(Math.min(1.2,d.tmda/ref))*520,widthUnits:'meters',widthMinPixels:1.5,capRounded:true,jointRounded:true,opacity:.95}),
+    new deck.ColumnLayer({id:'cols',data:sts,diskResolution:12,radius:320,extruded:true,getPosition:d=>d.position,getElevation:d=>d.tmda,elevationScale:16000/maxTot,getFillColor:d=>d.col,opacity:.92,pickable:true,autoHighlight:true,highlightColor:[255,255,255,120],
+      onClick:info=>{ if(info&&info.object) stationCard(info.object.id); }})
+  ]; }
+function partLayer(){ const pts=[];
+  for(const p of deck3dParts){ p.pos+=0.05; if(p.pos>=p.path.length-1)p.pos-=(p.path.length-1);
+    const i=Math.floor(p.pos),f=p.pos-i,a=p.path[i],b=p.path[Math.min(i+1,p.path.length-1)];
+    pts.push({position:[a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f,25],col:p.col}); }
+  return new deck.ScatterplotLayer({id:'parts',data:pts,getPosition:d=>d.position,getRadius:14,radiusUnits:'meters',radiusMinPixels:1.6,getFillColor:d=>d.col,opacity:.95,parameters:{depthTest:false}}); }
+function deck3dFrame(){ if(!deck3dActive){deck3dRAF=null;return;} deckgl.setProps({layers:[...deck3dStatic,partLayer()]}); deck3dRAF=requestAnimationFrame(deck3dFrame); }
+function start3d(){ const hint=document.getElementById('deckHint');
+  document.getElementById('deck3d').hidden=false; hint.hidden=false;
+  if(!window.deck){ hint.textContent='deck.gl no cargó (¿sin conexión?)'; return; }
+  if(!selReg) return;
+  const sts=Object.keys(DB.stations).filter(k=>DB.stations[k].reg===selReg).map(k=>DB.stations[k]);
+  let lon=map.getCenter().lng, lat=map.getCenter().lat;
+  if(sts.length){ lon=sts.reduce((a,s)=>a+s.lon,0)/sts.length; lat=sts.reduce((a,s)=>a+s.lat,0)/sts.length; }
+  deckVS={longitude:lon,latitude:lat,zoom:Math.min(11,Math.max(7.5,map.getZoom())),pitch:52,bearing:-15,maxPitch:78,minZoom:5,maxZoom:17};
+  build3d(selReg);
+  if(!deckgl){ deckgl=new deck.DeckGL({container:'deck3d',views:[new deck.MapView({repeat:false})],
+      controller:{dragRotate:true,touchRotate:true,inertia:true}, viewState:deckVS,
+      onViewStateChange:e=>{ deckVS=e.viewState; deckgl.setProps({viewState:deckVS}); }, layers:deck3dStatic }); }
+  else { deckgl.setProps({viewState:deckVS,layers:deck3dStatic}); }
+  deck3dActive=true; if(!deck3dRAF) deck3dFrame(); }
+function stop3d(){ deck3dActive=false; if(deck3dRAF){cancelAnimationFrame(deck3dRAF);deck3dRAF=null;}
+  document.getElementById('deck3d').hidden=true; document.getElementById('deckHint').hidden=true; }
+
 const MODE_HINT={
   flechas:'Flechas por tramo: cada rama con su TMDA. Aparecen al acercarte; la estación activa siempre.',
   cintas:'Cintas por corredor: la red se engrosa/colorea por TMDA (supuesto de corredor).',
   particulas:'Partículas: densidad ∝ TMDA; velocidad ilustrativa (no medida). Modo presentación.',
-  columnas:'Columnas 3D: altura ∝ TMDA total por estación.'};
+  d3:'Vista 3D (deck.gl): red extruida por TMDA + columnas por estación + partículas. Arrastra: mover · botón derecho / Ctrl+arrastra: orbitar · rueda: zoom.'};
 function setFlowMode(m){ flowMode=m;
   document.querySelectorAll('#flowModeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
   const mh=document.getElementById('modeHint'); if(mh) mh.textContent=MODE_HINT[m]||'';
-  stopParticles(); clearColumns();
+  stopParticles(); clearColumns(); stop3d();
   if(roadLayer) roadLayer.setStyle(roadStyle);
   drawPoints(); drawArrows();
   if(m==='particulas') startParticles();
-  if(m==='columnas') drawColumns();
+  if(m==='d3') start3d();
   renderLeg(); }
 function raise(){ [flowLayer,ptLayer,peajeLayer].forEach(l=>{ if(l&&map.hasLayer(l)){map.removeLayer(l);map.addLayer(l);} }); }
 
@@ -401,6 +448,7 @@ async function loadRoads(cod){ clearRoads(); if(!showRoad||!cod)return;
     [canvasLight,canvasDark,sat,streets].forEach(t=>{if(map.hasLayer(t))t.bringToBack();});
     raise();
     if(flowMode==='particulas') startParticles();
+    if(flowMode==='d3') start3d();
   }catch(e){ /* región sin red o fetch bloqueado (file://) */ } }
 
 // ---------- selección REGIÓN ----------
@@ -410,7 +458,7 @@ function selectRegion(cod){ selReg=cod; selCut=null; selStation=null;
   document.querySelectorAll('.regrow').forEach(r=>r.classList.toggle('on',r.dataset.cod===cod));
   document.getElementById('allReg').classList.toggle('on',!cod);
   geoLayer.setStyle(styleF); drawPoints(); drawArrows();
-  stopParticles(); if(flowMode==='columnas') drawColumns(); else clearColumns();
+  stopParticles(); clearColumns(); stop3d();
   if(cod){ fitRegion(cod); loadRoads(cod); } else { clearRoads(); try{map.flyTo([-38,-71],4,{duration:.7});}catch(e){} }
   updateKPIs(); renderTerritorial(); renderLeg();
   document.getElementById('bottom').innerHTML='<p class="ph">Pincha un <b>punto de medición</b> del mapa para ver su ficha, o una <b>comuna</b> para su tendencia.</p>'; }
