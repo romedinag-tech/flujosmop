@@ -128,7 +128,7 @@ canvas{max-width:100%}
       <div class="sect">
         <p class="eyebrow">Capas</p>
         <div class="lyr">
-          <label><input type="checkbox" id="ckFlow" checked> Flechas de flujo (por rama)</label>
+          <label><input type="checkbox" id="ckFlow" checked> Flechas de flujo (al elegir región)</label>
           <label><input type="checkbox" id="ckChoro" checked> Coropleta comunal (TMDA)</label>
           <label><input type="checkbox" id="ckPts" checked> Puntos de medición</label>
           <label><input type="checkbox" id="ckZon" checked> Zonas (grilla)</label>
@@ -251,7 +251,7 @@ function arrowGeom(lat,lon,az,tmda,side){
   return {s:[sLat,sLon],e:[eLat,eLon],
     h1:[eLat+hL*Math.cos(b1),eLon+hL*Math.sin(b1)/cl],
     h2:[eLat+hL*Math.cos(b2),eLon+hL*Math.sin(b2)/cl]}; }
-function drawArrows(){ if(flowLayer){map.removeLayer(flowLayer);flowLayer=null;} if(!showFlow||!DB.arrows)return;
+function drawArrows(){ if(flowLayer){map.removeLayer(flowLayer);flowLayer=null;} if(!showFlow||!DB.arrows||!selReg)return;
   flowLayer=L.layerGroup();
   for(const a of DB.arrows){ const lat=a[0],lon=a[1],az=a[2],tmda=a[3],tip=a[4],cut=a[5],side=a[6];
     if(tmda<THR()||!tipoOn[tip]||!inScope(cut))continue;
