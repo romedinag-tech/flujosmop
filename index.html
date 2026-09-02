@@ -196,7 +196,7 @@ function cssv(n){ return getComputedStyle(document.documentElement).getPropertyV
 function hexA(hex,a){ hex=(hex||'').replace('#',''); if(hex.length===3)hex=hex.split('').map(c=>c+c).join(''); const n=parseInt(hex,16); return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`; }
 
 // ---------- MAPA + estilos ----------
-const map=L.map('map',{preferCanvas:true,zoomControl:true}).setView([-38,-71],4);
+const map=L.map('map',{preferCanvas:false,zoomControl:true}).setView([-38,-71],4);  // SVG: fiable en alta densidad (DPR)
 const canvasLight=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,maxNativeZoom:16,attribution:'Basemap © Esri'});
 const canvasDark=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,maxNativeZoom:16,attribution:'Basemap © Esri'});
 const sat=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Imagery © Esri, Maxar'});
@@ -234,7 +234,7 @@ function ptRadius(v){ return 3+13*Math.sqrt(Math.max(0,v)/ptVmax); }   // área 
 function drawPoints(){ if(ptLayer)map.removeLayer(ptLayer); if(!showPts)return; ptLayer=L.layerGroup();
   ptVmax=Math.max(1,...U.puntos.map(p=>p[4]));
   for(const p of U.puntos){ if(p[2]<THR()||!tipoOn[p[6]]||!inScope(p[7]))continue;
-    L.circleMarker([p[0],p[1]],{radius:ptRadius(p[4]),weight:1,color:isDark()?'#0b0e14':'#2b3646',opacity:.85,fillColor:colorVal(p[4]),fillOpacity:.85})
+    L.circleMarker([p[0],p[1]],{radius:ptRadius(p[4]),weight:1.6,color:'#ffffff',opacity:.95,fillColor:colorVal(p[4]),fillOpacity:.95})
      .on('click',()=>stationCard(p[8]))
      .bindTooltip(`Estación ${p[8]} · ${fmt(p[4])} veh/día — clic para su ficha`,{direction:'top'})
      .addTo(ptLayer); }
