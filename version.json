@@ -1,79 +1,39 @@
 {
- "version": 4,
+ "version": 5,
  "fecha": "2026-10-02",
  "sitio": "https://romedinag-tech.github.io/flujosmop/",
- "cambio": "Dos cosas, publicadas juntas. (1) El paso 1 del emparejamiento de cada flecha toma el leg del mismo rol MAS CERCANO al punto, no el primero en el orden del arbol espacial (same[0]): el orden del arbol no es un criterio, y con mas de un leg del rol dentro del radio elegia uno cualquiera. El desempate es por el mismo orden de lista, asi que una flecha con un solo candidato o con candidatos empatados devuelve exactamente lo de v3. (2) El pie decia 'Uso interno - trae coordenadas por punto' en un sitio publico cuya fuente tambien es publica: ahora dice que la fuente es el servicio ArcGIS REST de la Direccion de Vialidad y que las coordenadas son de estaciones de conteo, no de personas. Cache-bust ?v=4 en los geojson de la red. Los geojson NO cambian: son byte a byte los de v3.",
+ "cambio": "Vista nueva 'Evolucion' en el menu superior, junto a 'Puntos de medicion' (la de siempre). Compara el flujo de cada punto con su medicion anterior o con la de dos anos antes, en las tres capas: censos PNCV por rama, peajes fiscales por plaza y portico/plaza de las concesiones de Santiago. Verde sube, rojo baja, gris dentro de la banda (+-5 % en censos, +-1 % en peajes y concesiones). Los censos 2024-2025 se homologan a la definicion de 2015-2023 (motorizados de 4 ruedas) con la razon del conteo horario de la propia rama, y un selector muestra tambien el valor publicado. La vista Puntos de medicion no cambia. Cache-bust ?v=5 en los geojson de la red; los geojson NO cambian (16 de 16 identicos byte a byte a los de v4).",
  "medido": {
-  "flechas": 3765,
-  "reproduccion_de_v3": {
-   "nota": "prep_flechas.py --paso1 orden reproduce el parquet publicado por v3 FILA A FILA",
-   "filas": 3765,
-   "columnas_comparadas": 9,
-   "diferencias": 0
+  "censos": {
+   "rama_anio": 13160,
+   "con_medicion_anterior_comparable": 8721,
+   "sin_calce_de_nombre_con_la_medicion_anterior": 679,
+   "sin_medicion_previa": 3760,
+   "nota_calce": "la rama se empareja con la del ano de referencia por NOMBRE (no por numero: hay ramas renumeradas entre anos); las 679 sin calce quedan en gris con 'sin calce', no se descartan",
+   "homologacion_2024_2025_por_origen": {"conteo_horario_de_la_rama": 2311, "conteo_horario_de_la_estacion": 14, "mediana_de_la_region": 39},
+   "mediana_variacion_publicado_vs_homologado": {"2024": [0.77, -1.08], "2025": [6.74, 4.14]},
+   "clases_con_banda_5pct_contra_medicion_anterior": {"sube": 5131, "estable": 1491, "baja": 2099}
   },
-  "defecto_de_v3": {
-   "flechas_con_mas_de_un_leg_de_su_rol_en_el_radio": 2639,
-   "de_ellas_a_distancias_distintas": 102,
-   "rango_mediana_m": 12.9,
-   "rango_maximo_m": 62.8,
-   "nota_de_convencion": "102 y 12,9 m salen de redondear la distancia a 2 decimales y exigir mas de 5 mm de diferencia; con la distancia sin redondear son 109 flechas y 9,4 m de rango mediana, con el mismo maximo de 62,8 m",
-   "invariante_ningun_leg_disponible_del_mismo_rol_mas_cerca_que_el_elegido": {
-    "antes": 36,
-    "despues": 0,
-    "exceso_maximo_m_antes": 58.03,
-    "nota": "36 y no 102 porque en las demas el leg mas cercano ya lo habia tomado otra rama de la estacion: la eleccion no era mejorable"
-   }
+  "peajes": {
+   "criterio": "se comparan solo los dias del ano presentes en ambos anos; los meses enteros en cero se excluyen como hueco de dato y los dias en cero aislados se conservan y se cuentan",
+   "meses_vacios_excluidos": ["Chaimavida 2023-05", "Cristo Redentor 2023-05", "Las Raices 2023-05", "San Roque 2023-05", "Coronel 2010-04 a 2010-10"],
+   "comparaciones_con_dias_en_cero": 68
   },
-  "desempate_devuelve_lo_de_v3": {
-   "flechas_por_rol_con_candidato_unico_o_empatado": 3314,
-   "que_eligen_un_leg_distinto_al_de_v3": 0
+  "concesiones": {
+   "puntos_con_evolucion": 183,
+   "puntos_en_el_visor": 184,
+   "sin_evolucion": "RDM-TOCO PP13SN (Portico Tocornal, Ruta 5 Santiago-Talca): solo trae 2026, no tiene contra que compararse",
+   "mediana_2025_vs_2024_pct": 3.56,
+   "puntos_2025_vs_2024": 166,
+   "dias_comunes_2026_parcial": 243
   },
-  "flechas_que_cambian_de_azimut": {
-   "n": 59,
-   "de": 3765,
-   "pct": 1.57,
-   "delta_grados_mediana": 119.6,
-   "delta_grados_max": 179.7
-  },
-  "origen_del_azimut": {
-   "antes": {"rol": 3395, "cercano": 353, "rol_lejano": 7, "tangente": 10},
-   "despues": {"rol": 3395, "cercano": 353, "rol_lejano": 7, "tangente": 10},
-   "nota": "ninguna flecha cambia de origen: el paso 1 reordena que leg toma cada rama, no quien se resuelve por rol"
-  },
-  "distancia_de_la_flecha_a_su_arco_m": {
-   "mediana": {"antes": 2.8, "despues": 2.8},
-   "suma_nacional_km": {"antes": 48.71, "despues": 48.316},
-   "a_mas_de_70m": {"antes": 17, "despues": 17},
-   "a_mas_de_100m": {"antes": 13, "despues": 13},
-   "a_mas_de_1km": {"antes": 10, "despues": 10},
-   "nota": "los tres cortes no se mueven porque esas flechas no las resuelve el paso 1: son rol_lejano, cercano o tangente"
-  },
-  "flechas_que_se_acercan": {"n": 29, "mediana_m": 11.7, "maximo_m": 58.1},
-  "flechas_que_se_alejan": {
-   "n": 14,
-   "mediana_m": 4.65,
-   "maximo_m": 42.8,
-   "por_intercambio_entre_ramas_hermanas": 11,
-   "empeoramiento_neto": 3,
-   "detalle_intercambio": "en 11 de las 14 la suma de distancias de su estacion no cambia: dos ramas hermanas se cambiaron el leg (09-199 r1/r2 del rol S-75, 0,2 y 43,0 m). Cual de las dos patas del camino pasante es r1 no lo decide la distancia",
-   "detalle_neto": "las 3 restantes estan en estaciones que MEJORAN, porque la rama que se aleja le cede el leg bueno a la rama que si lleva ese rol: 12-039 r4 11,6->37,9 m (estacion 87,4->61,1 m), 09-130 r3 7,7->21,1 m (40,6->36,5 m), 02-065 r1 3,9->12,3 m (28,5->20,1 m)"
-  },
-  "por_estacion": {"tocadas": 15, "mejoran": 15, "empeoran": 0},
-  "invariante_origen_rol_dentro_del_radio_max_m": {"antes": 68.9, "despues": 68.9},
-  "parquet_canonicos_sin_cambio": 13,
-  "parquet_que_cambia": "pnc_flechas_az.parquet (3.765 filas x 9 columnas antes y despues; cambia la huella de contenido, no el tamano)",
-  "geojson_de_la_red": {"cambian": 0, "de": 16, "nota": "identicos byte a byte a los de v3; no se regeneraron"},
-  "etiqueta_del_pie": {
-   "antes": "Uso interno - trae coordenadas por punto.",
-   "despues": "Fuente publica: servicio ArcGIS REST de la Direccion de Vialidad, MOP. Las coordenadas son de las estaciones de conteo, no de personas.",
-   "lugares_cambiados": "un unico lugar fuente, scripts/dashkit/build_flujo.py (textos['foot']); las otras dos ocurrencias eran el HTML generado (04_viewers y _deploy_pages/index.html), que se regenera. El README y este version.json no la traian",
-   "evidencia_de_que_la_fuente_es_publica": "el servicio https://rest-sit.mop.gob.cl/arcgis/rest/services/VIALIDAD/Plan_Nacional_de_Censos/MapServer responde HTTP 200 sin credenciales (verificado 2026-10-02) y declara copyrightText 'Direccion de Vialidad, Ministerio de Obras Publicas'"
-  }
+  "cifras_control": "scripts/cifras_control.py --compara 00_docs/cifras_control_2026-10-02_paso1_leg_cercano.json: identico, exit 0 (la vista solo agrega archivos en 02_processed/evolucion/ y 04_viewers/data/evolucion.json)",
+  "verificacion_en_navegador": "servido por HTTP; superficie medida con getBoundingClientRect: svg 686x582, flechas con area > 0 en los tres colores de tendencia, 65 etiquetas visibles de ~63x19 px a zoom 12 en Santiago; tabla de la ficha sin desborde horizontal; vuelta a Puntos de medicion sin capas de evolucion residuales; consola sin errores propios"
  },
- "evidencia": "10_flujos_mop/00_docs/respuesta_flechas_leg_mas_cercano_y_etiqueta_2026-10-02.md",
+ "evidencia": "10_flujos_mop/02_processed/evolucion/controles.json",
  "sha256_index_html": {
-  "local_crlf": "54fff34cfbcae636ffceba357d93df07586fc75b47d967dca9d0f99929bffeb8",
-  "servido_lf": "de2328cc4a759e99348575916f8aadbde572b8d030d5c656c730338b84ea3d47",
-  "nota": "git normaliza a LF al guardar el blob y Pages sirve el blob, asi que el sha256 del archivo servido NUNCA coincide con el del archivo local en Windows (el local tiene 794 CRLF). Para verificar la publicacion se comparan los dos con los fines de linea normalizados."
+  "local_crlf": "ab9fb24b2392ba23e93b1f6ecdde08f4e2388132f564cbef4eb29b63520971e3",
+  "lf_normalizado": "8e391a2871eb7b8e445c37fde1af9e9bdbcc02e3cc962329da23b4edb2a6a8e3",
+  "nota": "git normaliza a LF al guardar el blob y Pages sirve el blob, asi que el sha256 del archivo servido NUNCA coincide con el del local en Windows (el local tiene 1008 CRLF). Se verifica comparando con los fines de linea normalizados."
  }
 }
