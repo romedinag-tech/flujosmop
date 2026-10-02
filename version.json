@@ -1,0 +1,41 @@
+{
+ "version": 2,
+ "fecha": "2026-10-01",
+ "sitio": "https://romedinag-tech.github.io/flujosmop/",
+ "sha256_index_html": "240cf43afd2a6fbe3118a0d864e2e61bd361964a4d8a3bf759be249326751d71",
+ "cambio": "Coordenada y rol VIGENTES en todo lo que el visor dibuja o mide: posicion de puntos, zonas, flechas y ficha de estacion desde lat_vigente/lon_vigente; azimut de cada flecha emparejado contra el eje del rol_vigente; atribucion de TMDA de las cintas por rol_vigente y coordenada vigente. Cache-bust ?v=2 en los geojson de la red.",
+ "medido": {
+  "flechas": 3765,
+  "flechas_a_100m_o_menos_de_su_arco_pct": {
+   "antes": 96.44,
+   "despues": 98.03
+  },
+  "flechas_a_mas_de_100m": {
+   "antes": 134,
+   "despues": 74
+  },
+  "en_54_estaciones_con_coordenada_corregida": {
+   "flechas": 148,
+   "a_mas_de_100m": {
+    "antes": 59,
+    "despues": 0
+   },
+   "mediana_m": {
+    "antes": 27.6,
+    "despues": 3.5
+   },
+   "max_m": {
+    "antes": 20593.5,
+    "despues": 93.8
+   }
+  },
+  "tramos_con_tmda_atribuido": {
+   "antes": 3078,
+   "despues": 2837,
+   "de": 14096
+  },
+  "tramos_que_cambian_de_tmda": 394,
+  "de_los_atribuidos_antes_por_la_llave_falsa_S_R": 249
+ },
+ "evidencia": "10_flujos_mop/00_docs/respuesta_flechas_coordenada_vigente_2026-10-01.md"
+}

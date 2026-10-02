@@ -8,10 +8,15 @@ de las plazas de peaje.
 
 ## Qué muestra
 
-- **Serie 2014–2025** de TMDA (Tránsito Medio Diario Anual) · 1.405 estaciones censales
+- **Serie 2014–2025** de TMDA (Tránsito Medio Diario Anual) · 1.402 estaciones censales
 - Dos lentes: **flujo por rama (sentido)** y **flujo por estación (total)**
 - Coropleta comunal por quintiles, zonificación con tendencia por año, y **212 plazas de peaje**
 - Mapa con base, satélite, vialidad y cuerpos de agua
+- **Capa de concesiones de Santiago:** 184 pórticos y plazas con flujo y perfil horario
+
+Lo que el visor **dibuja** usa la *coordenada vigente* y el *rol vigente*: la coordenada publicada venía
+desplazada en 54 estaciones, y el azimut de cada flecha se mide contra el eje del rol que la red vigente
+tiene. La versión publicada y lo que cambió están en [`version.json`](version.json).
 
 ## Fuentes
 
