@@ -1,15 +1,28 @@
 {
- "version": 6,
+ "version": 7,
  "fecha": "2026-10-02",
  "sitio": "https://romedinag-tech.github.io/flujosmop/",
- "cambio": "La capa de comunas deja de estar siempre encendida: al ser clicable tapaba los clics del analisis. Ahora es opcional, con una casilla 'Comunas' en el cuadro de Capas y otra gemela en la vista Evolucion (sincronizadas), y parte apagada. Con la capa apagada, la comuna elegida desde el buscador igual se marca con su contorno, que no captura clics. Datos sin cambio: geojson 16 de 16 identicos a v5, cifras_control identico. Cache-bust ?v=6.",
+ "cambio": "Vista 'Puntos de medicion' centrada en el punto. (1) Cada punto muestra su nivel de desagregacion con forma y color: anual (circulo), diario (cuadrado), horario 12 h (triangulo), horario 24 h (rombo); las cuatro formas tienen la misma area, asi el tamano sigue siendo el flujo. Los censos PNCV se clasifican con el conteo horario de sus campanas entregado por Vialidad via Ley de Transparencia (SIAC 14488), decision de Rodrigo; su perfil horario se publica. (2) Se quitan el resumen general (estaciones, mediciones, periodo, peajes) y los graficos territoriales (evolucion del TMDA, comunas con mayor TMDA, estaciones por rango): el panel derecho analiza el o los puntos seleccionados (flujo anual, diario 2025 y perfil horario), superpuestos o sumados. Varios puntos: Ctrl/Shift + clic o boton 'Seleccion multiple'. La vista Evolucion no cambia. Geojson sin cambio.",
  "medido": {
-  "verificacion_en_navegador": "servido por HTTP, viewport 1700x950, zoom 12 en Santiago: con la capa apagada (estado inicial) el clic en cuatro puntos de la comuna de Santiago llega al mapa y no a una comuna; encendida llega a la comuna (13101, 13126) y hay 301 poligonos con area > 0; apagada de nuevo, vuelve al mapa. Contorno de la comuna elegida con la capa apagada: 34.144 px2, no interactivo. Casillas de Capas y de Evolucion sincronizadas en ambos sentidos. Consola sin errores.",
-  "nota": "el vuelo animado del buscador no se pudo observar porque el panel de prueba estaba oculto (requestAnimationFrame pausado); el encuadre sin animacion lleva a la comuna correcta con la capa apagada"
+  "niveles": {
+   "censos_pncv": {"h24": 249, "h12": 1151, "anual": 2},
+   "concesiones": {"h24": 156, "diario": 28},
+   "peajes_fiscales_georreferenciados": {"diario": 4},
+   "regla": "cada punto toma el nivel mas fino que tiene; en el PNCV, la duracion del ultimo ano con conteo horario"
+  },
+  "flujo_del_punto_pncv": {
+   "definicion": "vehiculos que cruzan la estacion: TMDA de la rama si tiene una; suma de ramas / 2 si tiene 3 o 4 (cada vehiculo cuenta en la rama por la que entra y en la que sale)",
+   "control": "regla contra la suma de movimientos del mismo conteo, 839 estacion-ano de 24 h: mediana 1,0000, 97,26 % dentro de +-1 % (1 rama 99,29 %, 3 ramas 97,58 %, 4 ramas 96,43 %)"
+  },
+  "perfil_horario_vs_flujo_anual": "en estaciones de 24 h, suma del perfil / flujo anual: mediana 1,0138 hasta 2023 (707 estacion-ano) y 1,0000 desde 2024 (145); la diferencia hasta 2023 es de definicion: el TMDA publicado cuenta solo motorizados de 4 ruedas y el perfil, todas las categorias",
+  "serie_diaria_2025": {"peajes_dias_con_dato": 334, "concesiones_con_serie": 178, "concesiones_sin_serie_2025": 6},
+  "suma": "se dibuja solo donde todos los puntos seleccionados tienen dato (ano, dia u hora)",
+  "cifras_control": "identico (exit 0); los bancos no cambian, solo se agregan 04_viewers/data/puntos_nivel.json y 02_processed/puntos_nivel/controles.json",
+  "verificacion_en_navegador": "HTTP, viewport 1700x950, region Metropolitana: 271 marcadores con area > 0 (257 de 12 h, 13 de 24 h, 1 anual, igual al conteo esperado desde los datos); clic real reemplaza la seleccion y Ctrl + clic agrega; peaje y concesion entran a la comparacion; serie diaria solo para quien la tiene; suma horaria 7-18 h con una estacion de 12 h; quitar un chip actualiza; vista Evolucion intacta; modo oscuro; consola sin errores"
  },
  "sha256_index_html": {
-  "local_crlf": "eb9f93bd0f0ec8328509989105e93c7cd9821bf37b0a8f15d3adce3643dcd4ae",
-  "lf_normalizado": "6a34dd468580d5509c6117b0e07ec384252d69123ab3490018522de75a2f9f7b",
-  "nota": "git normaliza a LF al guardar el blob y Pages sirve el blob, asi que el sha256 del archivo servido NUNCA coincide con el del local en Windows (el local tiene 1021 CRLF). Se verifica comparando con los fines de linea normalizados."
+  "local_crlf": "8d871be7b668709d4a7d45da3d7f9106951617af48a51bb98f23b3f7b51da9f4",
+  "lf_normalizado": "b9b272680cb1bfc523279432a11be0eb5209a28d65de383ac4f5ccd8ffba732d",
+  "nota": "git normaliza a LF al guardar el blob y Pages sirve el blob, asi que el sha256 del archivo servido NUNCA coincide con el del local en Windows (el local tiene 1130 CRLF). Se verifica comparando con los fines de linea normalizados."
  }
 }
