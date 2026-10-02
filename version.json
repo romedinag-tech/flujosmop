@@ -1,45 +1,99 @@
 {
- "version": 2,
- "fecha": "2026-10-01",
+ "version": 3,
+ "fecha": "2026-10-02",
  "sitio": "https://romedinag-tech.github.io/flujosmop/",
- "cambio": "Coordenada y rol VIGENTES en todo lo que el visor dibuja o mide: posicion de puntos, zonas, flechas y ficha de estacion desde lat_vigente/lon_vigente; azimut de cada flecha emparejado contra el eje del rol_vigente; atribucion de TMDA de las cintas por rol_vigente y coordenada vigente. Cache-bust ?v=2 en los geojson de la red.",
+ "cambio": "Los candidatos de cada flecha se filtran por DISTANCIA REAL al eje (<= 70 m), no por la caja (bounding box) del buffer: STRtree.query(buffer) de shapely filtra por bounding box, asi que un camino cuyo rectangulo envolvente rozaba el buffer entraba como candidato con su geometria a cientos de metros. Cascada explicita de 5 pasos y el campo origen de cada flecha declara cual la resolvio: rol / cercano (ambos dentro de 70 m) / rol_lejano / cercano_lejano (radio ampliado declarado de 1.000 m, solo si no hay nada incidente) / tangente. Cache-bust ?v=3 en los geojson de la red. Las cintas NO cambian: no dependen de este criterio.",
  "medido": {
   "flechas": 3765,
-  "flechas_a_100m_o_menos_de_su_arco_pct": {
-   "antes": 96.44,
-   "despues": 98.03
+  "legs_candidatos_del_pais": {
+   "antes": 18246,
+   "despues": 12069,
+   "nota": "-33,9%: una de cada tres incidencias que el metodo consideraba no era una incidencia"
   },
-  "flechas_a_mas_de_100m": {
-   "antes": 134,
-   "despues": 74
-  },
-  "en_54_estaciones_con_coordenada_corregida": {
-   "flechas": 148,
-   "a_mas_de_100m": {
-    "antes": 59,
-    "despues": 0
+  "origen_del_azimut": {
+   "antes": {
+    "rol": 3445,
+    "cercano": 317,
+    "tangente": 3
    },
-   "mediana_m": {
-    "antes": 27.6,
-    "despues": 3.5
-   },
-   "max_m": {
-    "antes": 20593.5,
-    "despues": 93.8
+   "despues": {
+    "rol": 3395,
+    "cercano": 353,
+    "rol_lejano": 7,
+    "cercano_lejano": 0,
+    "tangente": 10
    }
   },
-  "tramos_con_tmda_atribuido": {
-   "antes": 3078,
-   "despues": 2837,
-   "de": 14096
+  "distancia_de_la_flecha_a_su_arco_m": {
+   "mediana": {
+    "antes": 3.0,
+    "despues": 2.8
+   },
+   "a_70m_o_menos_pct": {
+    "antes": 97.24,
+    "despues": 99.55
+   },
+   "a_mas_de_70m": {
+    "antes": 104,
+    "despues": 17
+   },
+   "a_mas_de_100m": {
+    "antes": 74,
+    "despues": 13
+   },
+   "a_mas_de_1km": {
+    "antes": 40,
+    "despues": 10
+   },
+   "maximo": {
+    "antes": 24747.2,
+    "despues": 4724.9
+   },
+   "suma_nacional_km": {
+    "antes": 266.4,
+    "despues": 48.7
+   }
   },
-  "tramos_que_cambian_de_tmda": 394,
-  "de_los_atribuidos_antes_por_la_llave_falsa_S_R": 249
+  "invariante_origen_rol_dentro_del_radio_max_m": {
+   "antes": 362.8,
+   "despues": 68.9
+  },
+  "flechas_emparejadas_por_rol_fuera_del_radio": {
+   "antes": 44,
+   "despues": 0
+  },
+  "flechas_que_cambian_de_azimut": {
+   "n": 121,
+   "de": 3765,
+   "pct": 3.21,
+   "delta_grados_mediana": 96.0,
+   "delta_grados_p90": 179.8,
+   "delta_grados_max": 180.0
+  },
+  "flechas_que_empeoran_en_distancia": {
+   "n": 3,
+   "detalle": "02-086 r3 82,2->103,2 m y 05-175 r1 242,8->255,6 m (pasan a cargar el rumbo de su propio rol); 12-024 r3 9,3->11,5 m (las ramas 3 y 4 intercambiaron leg; la estacion completa mejora de 506,8 a 39,4 m de suma de distancias)"
+  },
+  "flechas_que_mejoran_en_distancia": 91,
+  "costo_declarado": {
+   "azimut_que_pertenece_al_propio_rol": {
+    "antes": 3445,
+    "despues": 3402
+   },
+   "nota": "43 flechas dejan de llevar el rumbo de su propio rol y a cambio 87 dejan de estar fuera del radio"
+  },
+  "parquet_canonicos_sin_cambio": 13,
+  "cintas_tramos_con_tmda_atribuido": {
+   "antes": 2837,
+   "despues": 2837,
+   "de": 14096,
+   "nota": "sin cambio: prep_red_vial_regiones.py no lee pnc_flechas_az"
+  }
  },
- "evidencia": "10_flujos_mop/00_docs/respuesta_flechas_coordenada_vigente_2026-10-01.md",
+ "evidencia": "10_flujos_mop/00_docs/respuesta_flechas_candidatos_por_distancia_2026-10-02.md",
  "sha256_index_html": {
-  "local_crlf": "240cf43afd2a6fbe3118a0d864e2e61bd361964a4d8a3bf759be249326751d71",
-  "servido_lf": "c0d8086c9890842bbc4d1b20e99ebb17ed35b07fe9e467a7642ed64a5338548c",
-  "nota": "git normaliza a LF al guardar el blob y Pages sirve el blob, asi que el sha256 del archivo servido NUNCA coincide con el del archivo local en Windows. Para verificar la publicacion se comparan los dos con los fines de linea normalizados."
+  "local_crlf": "5101be25fcb1e7daa67d73d0c245d5d1c6b0db3b30f6d1102a16263382874e19",
+  "servido_lf": "6e393c493f3f3f87c6c634a90d74ac06957fb12c9b9169b962e37693a409a05e",
+  "nota": "git normaliza a LF al guardar el blob y Pages sirve el blob, asi que el sha256 del archivo servido NUNCA coincide con el del archivo local en Windows (el local tiene 794 CRLF). Para verificar la publicacion se comparan los dos con los fines de linea normalizados."
  }
 }
