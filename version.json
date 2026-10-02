@@ -2,7 +2,6 @@
  "version": 2,
  "fecha": "2026-10-01",
  "sitio": "https://romedinag-tech.github.io/flujosmop/",
- "sha256_index_html": "240cf43afd2a6fbe3118a0d864e2e61bd361964a4d8a3bf759be249326751d71",
  "cambio": "Coordenada y rol VIGENTES en todo lo que el visor dibuja o mide: posicion de puntos, zonas, flechas y ficha de estacion desde lat_vigente/lon_vigente; azimut de cada flecha emparejado contra el eje del rol_vigente; atribucion de TMDA de las cintas por rol_vigente y coordenada vigente. Cache-bust ?v=2 en los geojson de la red.",
  "medido": {
   "flechas": 3765,
@@ -37,5 +36,10 @@
   "tramos_que_cambian_de_tmda": 394,
   "de_los_atribuidos_antes_por_la_llave_falsa_S_R": 249
  },
- "evidencia": "10_flujos_mop/00_docs/respuesta_flechas_coordenada_vigente_2026-10-01.md"
+ "evidencia": "10_flujos_mop/00_docs/respuesta_flechas_coordenada_vigente_2026-10-01.md",
+ "sha256_index_html": {
+  "local_crlf": "240cf43afd2a6fbe3118a0d864e2e61bd361964a4d8a3bf759be249326751d71",
+  "servido_lf": "c0d8086c9890842bbc4d1b20e99ebb17ed35b07fe9e467a7642ed64a5338548c",
+  "nota": "git normaliza a LF al guardar el blob y Pages sirve el blob, asi que el sha256 del archivo servido NUNCA coincide con el del archivo local en Windows. Para verificar la publicacion se comparan los dos con los fines de linea normalizados."
+ }
 }
