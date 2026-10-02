@@ -1,99 +1,79 @@
 {
- "version": 3,
+ "version": 4,
  "fecha": "2026-10-02",
  "sitio": "https://romedinag-tech.github.io/flujosmop/",
- "cambio": "Los candidatos de cada flecha se filtran por DISTANCIA REAL al eje (<= 70 m), no por la caja (bounding box) del buffer: STRtree.query(buffer) de shapely filtra por bounding box, asi que un camino cuyo rectangulo envolvente rozaba el buffer entraba como candidato con su geometria a cientos de metros. Cascada explicita de 5 pasos y el campo origen de cada flecha declara cual la resolvio: rol / cercano (ambos dentro de 70 m) / rol_lejano / cercano_lejano (radio ampliado declarado de 1.000 m, solo si no hay nada incidente) / tangente. Cache-bust ?v=3 en los geojson de la red. Las cintas NO cambian: no dependen de este criterio.",
+ "cambio": "Dos cosas, publicadas juntas. (1) El paso 1 del emparejamiento de cada flecha toma el leg del mismo rol MAS CERCANO al punto, no el primero en el orden del arbol espacial (same[0]): el orden del arbol no es un criterio, y con mas de un leg del rol dentro del radio elegia uno cualquiera. El desempate es por el mismo orden de lista, asi que una flecha con un solo candidato o con candidatos empatados devuelve exactamente lo de v3. (2) El pie decia 'Uso interno - trae coordenadas por punto' en un sitio publico cuya fuente tambien es publica: ahora dice que la fuente es el servicio ArcGIS REST de la Direccion de Vialidad y que las coordenadas son de estaciones de conteo, no de personas. Cache-bust ?v=4 en los geojson de la red. Los geojson NO cambian: son byte a byte los de v3.",
  "medido": {
   "flechas": 3765,
-  "legs_candidatos_del_pais": {
-   "antes": 18246,
-   "despues": 12069,
-   "nota": "-33,9%: una de cada tres incidencias que el metodo consideraba no era una incidencia"
+  "reproduccion_de_v3": {
+   "nota": "prep_flechas.py --paso1 orden reproduce el parquet publicado por v3 FILA A FILA",
+   "filas": 3765,
+   "columnas_comparadas": 9,
+   "diferencias": 0
   },
-  "origen_del_azimut": {
-   "antes": {
-    "rol": 3445,
-    "cercano": 317,
-    "tangente": 3
-   },
-   "despues": {
-    "rol": 3395,
-    "cercano": 353,
-    "rol_lejano": 7,
-    "cercano_lejano": 0,
-    "tangente": 10
+  "defecto_de_v3": {
+   "flechas_con_mas_de_un_leg_de_su_rol_en_el_radio": 2639,
+   "de_ellas_a_distancias_distintas": 102,
+   "rango_mediana_m": 12.9,
+   "rango_maximo_m": 62.8,
+   "nota_de_convencion": "102 y 12,9 m salen de redondear la distancia a 2 decimales y exigir mas de 5 mm de diferencia; con la distancia sin redondear son 109 flechas y 9,4 m de rango mediana, con el mismo maximo de 62,8 m",
+   "invariante_ningun_leg_disponible_del_mismo_rol_mas_cerca_que_el_elegido": {
+    "antes": 36,
+    "despues": 0,
+    "exceso_maximo_m_antes": 58.03,
+    "nota": "36 y no 102 porque en las demas el leg mas cercano ya lo habia tomado otra rama de la estacion: la eleccion no era mejorable"
    }
   },
-  "distancia_de_la_flecha_a_su_arco_m": {
-   "mediana": {
-    "antes": 3.0,
-    "despues": 2.8
-   },
-   "a_70m_o_menos_pct": {
-    "antes": 97.24,
-    "despues": 99.55
-   },
-   "a_mas_de_70m": {
-    "antes": 104,
-    "despues": 17
-   },
-   "a_mas_de_100m": {
-    "antes": 74,
-    "despues": 13
-   },
-   "a_mas_de_1km": {
-    "antes": 40,
-    "despues": 10
-   },
-   "maximo": {
-    "antes": 24747.2,
-    "despues": 4724.9
-   },
-   "suma_nacional_km": {
-    "antes": 266.4,
-    "despues": 48.7
-   }
-  },
-  "invariante_origen_rol_dentro_del_radio_max_m": {
-   "antes": 362.8,
-   "despues": 68.9
-  },
-  "flechas_emparejadas_por_rol_fuera_del_radio": {
-   "antes": 44,
-   "despues": 0
+  "desempate_devuelve_lo_de_v3": {
+   "flechas_por_rol_con_candidato_unico_o_empatado": 3314,
+   "que_eligen_un_leg_distinto_al_de_v3": 0
   },
   "flechas_que_cambian_de_azimut": {
-   "n": 121,
+   "n": 59,
    "de": 3765,
-   "pct": 3.21,
-   "delta_grados_mediana": 96.0,
-   "delta_grados_p90": 179.8,
-   "delta_grados_max": 180.0
+   "pct": 1.57,
+   "delta_grados_mediana": 119.6,
+   "delta_grados_max": 179.7
   },
-  "flechas_que_empeoran_en_distancia": {
-   "n": 3,
-   "detalle": "02-086 r3 82,2->103,2 m y 05-175 r1 242,8->255,6 m (pasan a cargar el rumbo de su propio rol); 12-024 r3 9,3->11,5 m (las ramas 3 y 4 intercambiaron leg; la estacion completa mejora de 506,8 a 39,4 m de suma de distancias)"
+  "origen_del_azimut": {
+   "antes": {"rol": 3395, "cercano": 353, "rol_lejano": 7, "tangente": 10},
+   "despues": {"rol": 3395, "cercano": 353, "rol_lejano": 7, "tangente": 10},
+   "nota": "ninguna flecha cambia de origen: el paso 1 reordena que leg toma cada rama, no quien se resuelve por rol"
   },
-  "flechas_que_mejoran_en_distancia": 91,
-  "costo_declarado": {
-   "azimut_que_pertenece_al_propio_rol": {
-    "antes": 3445,
-    "despues": 3402
-   },
-   "nota": "43 flechas dejan de llevar el rumbo de su propio rol y a cambio 87 dejan de estar fuera del radio"
+  "distancia_de_la_flecha_a_su_arco_m": {
+   "mediana": {"antes": 2.8, "despues": 2.8},
+   "suma_nacional_km": {"antes": 48.71, "despues": 48.316},
+   "a_mas_de_70m": {"antes": 17, "despues": 17},
+   "a_mas_de_100m": {"antes": 13, "despues": 13},
+   "a_mas_de_1km": {"antes": 10, "despues": 10},
+   "nota": "los tres cortes no se mueven porque esas flechas no las resuelve el paso 1: son rol_lejano, cercano o tangente"
   },
+  "flechas_que_se_acercan": {"n": 29, "mediana_m": 11.7, "maximo_m": 58.1},
+  "flechas_que_se_alejan": {
+   "n": 14,
+   "mediana_m": 4.65,
+   "maximo_m": 42.8,
+   "por_intercambio_entre_ramas_hermanas": 11,
+   "empeoramiento_neto": 3,
+   "detalle_intercambio": "en 11 de las 14 la suma de distancias de su estacion no cambia: dos ramas hermanas se cambiaron el leg (09-199 r1/r2 del rol S-75, 0,2 y 43,0 m). Cual de las dos patas del camino pasante es r1 no lo decide la distancia",
+   "detalle_neto": "las 3 restantes estan en estaciones que MEJORAN, porque la rama que se aleja le cede el leg bueno a la rama que si lleva ese rol: 12-039 r4 11,6->37,9 m (estacion 87,4->61,1 m), 09-130 r3 7,7->21,1 m (40,6->36,5 m), 02-065 r1 3,9->12,3 m (28,5->20,1 m)"
+  },
+  "por_estacion": {"tocadas": 15, "mejoran": 15, "empeoran": 0},
+  "invariante_origen_rol_dentro_del_radio_max_m": {"antes": 68.9, "despues": 68.9},
   "parquet_canonicos_sin_cambio": 13,
-  "cintas_tramos_con_tmda_atribuido": {
-   "antes": 2837,
-   "despues": 2837,
-   "de": 14096,
-   "nota": "sin cambio: prep_red_vial_regiones.py no lee pnc_flechas_az"
+  "parquet_que_cambia": "pnc_flechas_az.parquet (3.765 filas x 9 columnas antes y despues; cambia la huella de contenido, no el tamano)",
+  "geojson_de_la_red": {"cambian": 0, "de": 16, "nota": "identicos byte a byte a los de v3; no se regeneraron"},
+  "etiqueta_del_pie": {
+   "antes": "Uso interno - trae coordenadas por punto.",
+   "despues": "Fuente publica: servicio ArcGIS REST de la Direccion de Vialidad, MOP. Las coordenadas son de las estaciones de conteo, no de personas.",
+   "lugares_cambiados": "un unico lugar fuente, scripts/dashkit/build_flujo.py (textos['foot']); las otras dos ocurrencias eran el HTML generado (04_viewers y _deploy_pages/index.html), que se regenera. El README y este version.json no la traian",
+   "evidencia_de_que_la_fuente_es_publica": "el servicio https://rest-sit.mop.gob.cl/arcgis/rest/services/VIALIDAD/Plan_Nacional_de_Censos/MapServer responde HTTP 200 sin credenciales (verificado 2026-10-02) y declara copyrightText 'Direccion de Vialidad, Ministerio de Obras Publicas'"
   }
  },
- "evidencia": "10_flujos_mop/00_docs/respuesta_flechas_candidatos_por_distancia_2026-10-02.md",
+ "evidencia": "10_flujos_mop/00_docs/respuesta_flechas_leg_mas_cercano_y_etiqueta_2026-10-02.md",
  "sha256_index_html": {
-  "local_crlf": "5101be25fcb1e7daa67d73d0c245d5d1c6b0db3b30f6d1102a16263382874e19",
-  "servido_lf": "6e393c493f3f3f87c6c634a90d74ac06957fb12c9b9169b962e37693a409a05e",
+  "local_crlf": "54fff34cfbcae636ffceba357d93df07586fc75b47d967dca9d0f99929bffeb8",
+  "servido_lf": "de2328cc4a759e99348575916f8aadbde572b8d030d5c656c730338b84ea3d47",
   "nota": "git normaliza a LF al guardar el blob y Pages sirve el blob, asi que el sha256 del archivo servido NUNCA coincide con el del archivo local en Windows (el local tiene 794 CRLF). Para verificar la publicacion se comparan los dos con los fines de linea normalizados."
  }
 }

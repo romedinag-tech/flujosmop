@@ -16,12 +16,15 @@ de las plazas de peaje.
 
 Lo que el visor **dibuja** usa la *coordenada vigente* y el *rol vigente*: la coordenada publicada venía
 desplazada en 54 estaciones, y el azimut de cada flecha se mide contra el eje del rol que la red vigente
-tiene. La versión publicada y lo que cambió están en [`version.json`](version.json).
+tiene, tomando el leg de ese rol **más cercano** al punto. La versión publicada y lo que cambió están en
+[`version.json`](version.json).
 
 ## Fuentes
 
 - Puntos censales y red vial: ArcGIS REST de la Dirección de Vialidad, MOP
   (`VIALIDAD/Plan_Nacional_de_Censos`, `VIALIDAD/Red_Vial_Chile`, `VIALIDAD/Infraestructura_Vial`).
-- Datos públicos del Ministerio de Obras Públicas de Chile.
+- Datos públicos del Ministerio de Obras Públicas de Chile. El servicio responde sin credenciales y
+  declara `Dirección de Vialidad, Ministerio de Obras Públicas` en su copyright (verificado 2026-10-02).
+  Las coordenadas que el visor dibuja son de **estaciones de conteo**, no de personas.
 
 Visor autocontenido (un solo `index.html`). Las teselas del mapa requieren conexión a internet.
