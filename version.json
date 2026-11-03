@@ -1,47 +1,31 @@
 {
- "version": 9,
+ "version": 10,
  "fecha": "2026-11-03",
  "sitio": "https://romedinag-tech.github.io/flujosmop/",
- "cambio": "Entran 15 puntos de cobro que solo tenia la respuesta de la DGC (AM014T0007417): Ruta 5 Collipulli-Temuco (10), Tunel San Cristobal (2), Ruta del Loa (1) y Autopista Concepcion-Cabrero (2). Nuevo nivel 'mensual' (hexagono) y grafico de flujo mensual en el panel. La serie diaria se compara dentro de un mismo ano. La vista Evolucion no cambia y no incluye estos puntos. Geojson sin cambio.",
+ "cambio": "Correcciones de ubicacion de puntos de concesion con la georreferencia oficial de las tarifas DGC, decision de Rodrigo: 9 puntos y Angostura. No se adopta la oficial en bloque. Sin datos de flujo nuevos. Geojson sin cambio.",
  "medido": {
   "puntos_capa_concesiones": {
-   "antes": 184,
-   "dgc": 15,
-   "despues": 199
+   "antes": 199,
+   "despues": 201,
+   "nuevos": "Entrada Purisima, que no tenia coordenada; Sn Fdo Norte Poniente (Norte-Sur) deja de sumarse con Sn Fdo Sur Poniente"
   },
-  "por_nivel_dgc": {
-   "mensual": 11,
-   "h24": 4
+  "correcciones_m_movidos": {
+   "Costanera Norte P2.1": 18323,
+   "Costanera Norte P8 antiguo": 10992,
+   "Sn Fdo Norte Poniente (Norte-Sur)": 4095,
+   "Angostura, plaza y porticos en un simbolo": 2984,
+   "Autopista Central PA 1": 1055,
+   "Pelequen Oriente y Poniente, intercambiados": 127
   },
-  "cobertura": {
-   "COTE": "mensual 2015 a may-2026",
-   "TSAC": "mensual 2015-2025; dia y hora 2022, 10 meses (faltan marzo y noviembre)",
-   "RLOA": "mensual jul-2024 a dic-2025",
-   "CONCA": "dia y hora 2021-2022; mensual 2016-2020 y 2023-may 2026, con huecos"
-  },
-  "controles": {
-   "anexo_COTE_vs_reporte_2025": "120 mes-punto, 119 exactos, razon maxima 1,0000036",
-   "OVU_TSC_vs_reporte_2022": "20 mes-punto, 20 exactos: identifica 101=Eje C1 (242) y 102=Eje C2 (243)",
-   "Quino_es_Victoria_Sur": "mismo flujo mes a mes en reporte y anexo",
-   "dia_hora_vs_mensual": "diferencia 0 en los 4 puntos",
-   "razon_banco_vs_reporte_DGC": "1,0000 en las 6 concesiones que estan en ambos; por eso no se repiten"
-  },
-  "ubicacion": {
-   "tarifas_DGC": 12,
-   "OpenStreetMap_declarado": [
-    "Huinanco",
-    "Puentes Negros",
-    "Cerritos Bayos"
-   ],
-   "puntos_existentes_movidos": 0
-  },
-  "fuera_y_declarado": "Loa 2026: un solo anexo con el mes mal rotulado ('Ene 25' que dice diciembre 2026), no entra",
-  "cifras_control": "los 14 bancos anteriores identicos; solo se agregan dgc_flujo_mensual, dgc_flujo_dia_hora y dgc_puntos. Referencia nueva 00_docs/cifras_control_2026-11-03_dgc.json",
-  "verificacion_en_navegador": "HTTP, viewport 1700x950: 199 puntos en la capa, 11 hexagonos con area > 0 (10 en La Araucania); Pua: anual y mensual, sin diario ni horario; Huinanco: mensual 108 meses, diario 2022 365 dias, perfil 24 h; Huinanco con Vespucio Sur: el diario compara solo 2025; Ejes C1+C2 en suma: diario 304 dias; Evolucion sin cambio; consola sin errores"
+  "regla_de_simbolo": "los dos sentidos de P2.1, los de P8 y los tres puntos de Angostura quedan en una sola coordenada, centro de las oficiales (en Angostura, de sus porticos): el flujo del simbolo no se parte",
+  "control_flujo": "los puntos que no se tocaron no cambian de contenido; 1 cambia: Sn Fdo Sur Poniente, de 6.534 a 3.650 veh/dia; la suma de la capa sube solo por Entrada Purisima",
+  "evidencia": "consultas/2026-11_georreferencia-oficial-dgc-vs-puntos-visor",
+  "cifras_control": "cambian solo porticos_geo y plazas_geo, a proposito (12 filas y 4 columnas nuevas con la coordenada previa). Referencia nueva 00_docs/cifras_control_2026-11-03_georef_v10.json",
+  "verificacion_en_navegador": "HTTP, viewport 1700x950: 476 marcadores con area > 0 (271 PNCV + 201 concesiones + 4 fiscales); marcador real en la coordenada nueva y ficha correcta en 8 puntos corregidos o afectados; perfil de 24 horas; consola sin errores"
  },
  "sha256_index_html": {
-  "local_crlf": "9858fa5ce9404fe3f426a2766b4411c7a317c7b789cb2c17d362b347238aca87",
-  "lf_normalizado": "317d684db9b77d892bbf6ed05294a6109fbd1dddd0a2fb1cf3dd581943098455",
+  "local_crlf": "bc969b401e312f63c530ce0063471f23d13a6f8b0c9a1a45111d1673eb3f8ca8",
+  "lf_normalizado": "2fda4e4f9a60c64ab353bf10a7a460ca9eb2360c1e9d1f41f1111888b84305e5",
   "nota": "git normaliza a LF al guardar el blob y Pages sirve el blob, asi que el sha256 del archivo servido NUNCA coincide con el del local en Windows (el local tiene 1144 CRLF). Se verifica comparando con los fines de linea normalizados."
  }
 }
