@@ -1,40 +1,47 @@
 {
- "version": 8,
+ "version": 9,
  "fecha": "2026-11-03",
  "sitio": "https://romedinag-tech.github.io/flujosmop/",
- "cambio": "Correcciones de datos, sin datos nuevos. (1) Las capas 'Plazas de peaje' y 'Concesiones Santiago' parten encendidas. (2) Vespucio Oriente recupera su perfil horario: el codigo de concesion era AVO en el horario y AVO1 en el diario. (3) Peajes fiscales con las llaves corregidas el 2026-10-31. (4) Las plazas grises cuyo flujo esta en la capa de concesiones ya no dicen 'sin dato'. Geojson sin cambio.",
+ "cambio": "Entran 15 puntos de cobro que solo tenia la respuesta de la DGC (AM014T0007417): Ruta 5 Collipulli-Temuco (10), Tunel San Cristobal (2), Ruta del Loa (1) y Autopista Concepcion-Cabrero (2). Nuevo nivel 'mensual' (hexagono) y grafico de flujo mensual en el panel. La serie diaria se compara dentro de un mismo ano. La vista Evolucion no cambia y no incluye estos puntos. Geojson sin cambio.",
  "medido": {
-  "concesiones_con_perfil_horario": {
-   "antes": 156,
-   "despues": 178,
-   "de": 184,
-   "cambio_solo_en": "AVO1, 22 puntos"
+  "puntos_capa_concesiones": {
+   "antes": 184,
+   "dgc": 15,
+   "despues": 199
   },
-  "peajes_fiscales": {
-   "Las Raices 2022 veh/dia": [
-    1275,
-    1187
+  "por_nivel_dgc": {
+   "mensual": 11,
+   "h24": 4
+  },
+  "cobertura": {
+   "COTE": "mensual 2015 a may-2026",
+   "TSAC": "mensual 2015-2025; dia y hora 2022, 10 meses (faltan marzo y noviembre)",
+   "RLOA": "mensual jul-2024 a dic-2025",
+   "CONCA": "dia y hora 2021-2022; mensual 2016-2020 y 2023-may 2026, con huecos"
+  },
+  "controles": {
+   "anexo_COTE_vs_reporte_2025": "120 mes-punto, 119 exactos, razon maxima 1,0000036",
+   "OVU_TSC_vs_reporte_2022": "20 mes-punto, 20 exactos: identifica 101=Eje C1 (242) y 102=Eje C2 (243)",
+   "Quino_es_Victoria_Sur": "mismo flujo mes a mes en reporte y anexo",
+   "dia_hora_vs_mensual": "diferencia 0 en los 4 puntos",
+   "razon_banco_vs_reporte_DGC": "1,0000 en las 6 concesiones que estan en ambos; por eso no se repiten"
+  },
+  "ubicacion": {
+   "tarifas_DGC": 12,
+   "OpenStreetMap_declarado": [
+    "Huinanco",
+    "Puentes Negros",
+    "Cerritos Bayos"
    ],
-   "San Roque 2019 veh/dia": [
-    3545,
-    2943
-   ],
-   "Cristo Redentor": "rotulo 'Oriente' pasa a 'Sentido de cobro': la plaza cuenta un solo sentido",
-   "Chaimavida y Coronel": "sin cambio"
+   "puntos_existentes_movidos": 0
   },
-  "plazas_grises": {
-   "total_capa": 212,
-   "con_flujo_fiscal": 4,
-   "con_flujo_en_capa_concesiones": 80,
-   "sin_flujo_por_punto": 128
-  },
-  "evolucion_concesiones": "0 de 183 puntos cambian al compararlos por ubicacion; cambia solo el orden del indice",
-  "cifras_control": "identico a 00_docs/cifras_control_2026-10-31_peajes_llaves.json (exit 0)",
-  "verificacion_en_navegador": "HTTP, viewport 1700x950, region Metropolitana: 459 marcadores con area > 0 (271 PNCV + 184 concesiones + 4 fiscales) y 208 plazas grises con area > 0; Vespucio Oriente P101-P103 dibuja perfil de 24 horas; Evolucion retira ambas capas y Puntos las repone; consola sin errores"
+  "fuera_y_declarado": "Loa 2026: un solo anexo con el mes mal rotulado ('Ene 25' que dice diciembre 2026), no entra",
+  "cifras_control": "los 14 bancos anteriores identicos; solo se agregan dgc_flujo_mensual, dgc_flujo_dia_hora y dgc_puntos. Referencia nueva 00_docs/cifras_control_2026-11-03_dgc.json",
+  "verificacion_en_navegador": "HTTP, viewport 1700x950: 199 puntos en la capa, 11 hexagonos con area > 0 (10 en La Araucania); Pua: anual y mensual, sin diario ni horario; Huinanco: mensual 108 meses, diario 2022 365 dias, perfil 24 h; Huinanco con Vespucio Sur: el diario compara solo 2025; Ejes C1+C2 en suma: diario 304 dias; Evolucion sin cambio; consola sin errores"
  },
  "sha256_index_html": {
-  "local_crlf": "c9e86ef9974b04a19ad1057cc9bd48d86209915df439f15e9d3fd2342132491f",
-  "lf_normalizado": "0d205f5329722e4f1cf799539dbf0ab77bd6bb6b333c441caea594c3699cad8c",
-  "nota": "git normaliza a LF al guardar el blob y Pages sirve el blob, asi que el sha256 del archivo servido NUNCA coincide con el del local en Windows (el local tiene 1130 CRLF). Se verifica comparando con los fines de linea normalizados."
+  "local_crlf": "9858fa5ce9404fe3f426a2766b4411c7a317c7b789cb2c17d362b347238aca87",
+  "lf_normalizado": "317d684db9b77d892bbf6ed05294a6109fbd1dddd0a2fb1cf3dd581943098455",
+  "nota": "git normaliza a LF al guardar el blob y Pages sirve el blob, asi que el sha256 del archivo servido NUNCA coincide con el del local en Windows (el local tiene 1144 CRLF). Se verifica comparando con los fines de linea normalizados."
  }
 }
