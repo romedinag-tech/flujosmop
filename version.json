@@ -1,31 +1,41 @@
 {
- "version": 10,
- "fecha": "2026-11-03",
+ "version": 11,
+ "fecha": "2026-11-05",
  "sitio": "https://romedinag-tech.github.io/flujosmop/",
- "cambio": "Correcciones de ubicacion de puntos de concesion con la georreferencia oficial de las tarifas DGC, decision de Rodrigo: 9 puntos y Angostura. No se adopta la oficial en bloque. Sin datos de flujo nuevos. Geojson sin cambio.",
+ "cambio": "Corrige el flujo anual del punto PNCV en estaciones de una sola rama real: las filas de relleno de la capa se contaban como ramas y el valor salia dividido por 2. Sin datos nuevos ni cambios de ubicacion. Geojson sin cambio.",
  "medido": {
-  "puntos_capa_concesiones": {
-   "antes": 199,
-   "despues": 201,
-   "nuevos": "Entrada Purisima, que no tenia coordenada; Sn Fdo Norte Poniente (Norte-Sur) deja de sumarse con Sn Fdo Sur Poniente"
+  "estacion_ano_corregidas": 210,
+  "estaciones": 205,
+  "por_ano": {
+   "2014": 80,
+   "2015": 122,
+   "2019": 3,
+   "2021": 3,
+   "2023": 1,
+   "2025": 1
   },
-  "correcciones_m_movidos": {
-   "Costanera Norte P2.1": 18323,
-   "Costanera Norte P8 antiguo": 10992,
-   "Sn Fdo Norte Poniente (Norte-Sur)": 4095,
-   "Angostura, plaza y porticos en un simbolo": 2984,
-   "Autopista Central PA 1": 1055,
-   "Pelequen Oriente y Poniente, intercambiados": 127
+  "ultimo_ano_medido_afectado": {
+   "02-080 (2025)": [
+    971,
+    1942
+   ],
+   "02-077 (2021)": [
+    611,
+    1222
+   ],
+   "15-061 (2021)": [
+    3050,
+    6101
+   ]
   },
-  "regla_de_simbolo": "los dos sentidos de P2.1, los de P8 y los tres puntos de Angostura quedan en una sola coordenada, centro de las oficiales (en Angostura, de sus porticos): el flujo del simbolo no se parte",
-  "control_flujo": "los puntos que no se tocaron no cambian de contenido; 1 cambia: Sn Fdo Sur Poniente, de 6.534 a 3.650 veh/dia; la suma de la capa sube solo por Entrada Purisima",
-  "evidencia": "consultas/2026-11_georreferencia-oficial-dgc-vs-puntos-visor",
-  "cifras_control": "cambian solo porticos_geo y plazas_geo, a proposito (12 filas y 4 columnas nuevas con la coordenada previa). Referencia nueva 00_docs/cifras_control_2026-11-03_georef_v10.json",
-  "verificacion_en_navegador": "HTTP, viewport 1700x950: 476 marcadores con area > 0 (271 PNCV + 201 concesiones + 4 fiscales); marcador real en la coordenada nueva y ficha correcta en 8 puntos corregidos o afectados; perfil de 24 horas; consola sin errores"
+  "control_contra_conteo_24h": "49 estacion-ano corregidas con conteo de 24 h: razon a la suma de movimientos, mediana 0,494 antes y 0,987 despues",
+  "que_cambia": "solo DB.niveles.pncv.flujo, 210 valores, todos se duplican; ningun otro campo cambia",
+  "cifras_control": "identico a 00_docs/cifras_control_2026-11-03_georef_v10.json (exit 0); los bancos no cambian",
+  "verificacion_en_navegador": "HTTP, viewport por defecto: 476 marcadores con area > 0; grafico anual de 02-080 con 1.928, 1.888, 1.626 y 1.942; 02-047 con 1.435 en 2015; 02-052, de tres ramas, sin cambio; consola sin errores"
  },
  "sha256_index_html": {
-  "local_crlf": "bc969b401e312f63c530ce0063471f23d13a6f8b0c9a1a45111d1673eb3f8ca8",
-  "lf_normalizado": "2fda4e4f9a60c64ab353bf10a7a460ca9eb2360c1e9d1f41f1111888b84305e5",
+  "local_crlf": "51f59b6aa5dac6efae22d875c0533528ece686fa09456104547a7f10bda556ca",
+  "lf_normalizado": "01915677aadb039c332886a400761961e2784196d3acd08c5cf0a532b0bd0020",
   "nota": "git normaliza a LF al guardar el blob y Pages sirve el blob, asi que el sha256 del archivo servido NUNCA coincide con el del local en Windows (el local tiene 1144 CRLF). Se verifica comparando con los fines de linea normalizados."
  }
 }
