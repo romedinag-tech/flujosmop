@@ -28,3 +28,11 @@ tiene, tomando el leg de ese rol **más cercano** al punto. La versión publicad
   Las coordenadas que el visor dibuja son de **estaciones de conteo**, no de personas.
 
 Visor autocontenido (un solo `index.html`). Las teselas del mapa requieren conexión a internet.
+
+## Licencia
+
+© 2026 Rodrigo Medina González. El contenido (datos elaborados, cifras, mapas y textos) está bajo
+[CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.es): se puede reutilizar sin fines
+comerciales citando la fuente; el uso comercial requiere autorización escrita. El código (HTML, CSS y
+JavaScript) tiene todos los derechos reservados. Los datos de base pertenecen a la Dirección de Vialidad
+del MOP. Texto completo en [`LICENSE`](LICENSE).
